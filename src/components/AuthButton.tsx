@@ -1,3 +1,5 @@
+"use client";
+
 import { signIn } from "next-auth/react";
 import { Button } from "./ui/button";
 
@@ -10,7 +12,9 @@ export default function AuthButton({ provider }: props) {
         <Button
             variant="outline"
             className="[&_svg]:size-5"
-            onClick={() => signIn(provider.toLowerCase())}
+            onClick={() =>
+                provider === Provider.Apple ? undefined : signIn(provider.toLowerCase())
+            }
         >
             {ProviderIcons[provider]}
         </Button>
