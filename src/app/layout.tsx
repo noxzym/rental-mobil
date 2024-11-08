@@ -1,6 +1,5 @@
 import { Viewport } from "next";
 import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -11,9 +10,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className={cn(inter.className, "bg-background text-foreground")}>
-                <main>{children}</main>
+        <html lang="en" className="scroll-smooth">
+            <body className={inter.className}>
+                <main className="mx-auto grid min-h-dvh grid-rows-[auto,1fr,auto]">{children}</main>
             </body>
         </html>
     );
