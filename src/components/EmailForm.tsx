@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useRef } from "react";
-import { Session } from "next-auth";
 import { MdMail } from "react-icons/md";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
