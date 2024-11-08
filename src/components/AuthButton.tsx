@@ -5,8 +5,7 @@ interface props {
     provider: keyof typeof Provider;
 }
 
-export default function SignInProviderButton({ provider }: props) {
-    console.log(provider);
+export default function AuthButton({ provider }: props) {
     return (
         <Button
             variant="outline"
