@@ -17,13 +17,13 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
+    searchParams: string;
     className?: string;
 }
 
-export default function DurationDialog({ className }: prop) {
+export default function DurationDialog({ searchParams, className }: prop) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     const [open, setOpen] = useState(false);
     const [duration, setDuration] = useState<number>();

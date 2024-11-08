@@ -18,13 +18,13 @@ import {
 } from "../ui/drawer";
 
 interface prop {
+    searchParams: string;
     className?: string;
 }
 
-export default function ScheduleDialog({ className }: prop) {
+export default function ScheduleDialog({ searchParams, className }: prop) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState<Date>();

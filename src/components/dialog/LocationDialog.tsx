@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ReadonlyURLSearchParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 import { MdLocationOn } from "react-icons/md";
 import { cn } from "@/lib/utils";
@@ -18,13 +18,13 @@ import {
 import { Input } from "../ui/input";
 
 interface prop {
+    searchParams: string;
     className?: string;
 }
 
-export default function LocationDialog({ className }: prop) {
+export default function LocationDialog({ searchParams, className }: prop) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     const [open, setOpen] = useState(false);
     const [location, setLocation] = useState<string>();

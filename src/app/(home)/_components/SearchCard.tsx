@@ -10,7 +10,7 @@ import ScheduleDialog from "@/components/dialog/ScheduleDialog";
 import TimeDialog from "@/components/dialog/TimeDialog";
 
 export default function SearchCard() {
-    const searchParams = useSearchParams();
+    const searchParams = useSearchParams().toString();
 
     return (
         <Card className="w-2/5 rounded-xl p-2">
@@ -19,12 +19,12 @@ export default function SearchCard() {
             </CardHeader>
             <CardContent>
                 <div className="grid w-full items-center gap-4">
-                    <LocationDialog />
+                    <LocationDialog searchParams={searchParams} />
                     <div className="flex w-full gap-2">
-                        <ScheduleDialog className="flex-grow" />
-                        <TimeDialog />
+                        <ScheduleDialog className="flex-grow" searchParams={searchParams} />
+                        <TimeDialog searchParams={searchParams} />
                     </div>
-                    <DurationDialog />
+                    <DurationDialog searchParams={searchParams} />
                 </div>
             </CardContent>
             <CardFooter>
@@ -32,13 +32,7 @@ export default function SearchCard() {
                     className="w-full bg-[#1877F2] text-background hover:bg-[rgba(11,95,204)]"
                     asChild
                 >
-                    <Link
-                        href={
-                            searchParams.toString().length
-                                ? `/search?${searchParams.toString()}`
-                                : "/search"
-                        }
-                    >
+                    <Link href={`/search${searchParams.length ? `?${searchParams}` : ""}`}>
                         Ayo cari
                     </Link>
                 </Button>

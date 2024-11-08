@@ -24,13 +24,13 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
+    searchParams: string;
     className?: string;
 }
 
-export default function TimeDialog({ className }: prop) {
+export default function TimeDialog({ searchParams, className }: prop) {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
 
     const [open, setOpen] = useState(false);
     const [time, setTime] = useState<number>();

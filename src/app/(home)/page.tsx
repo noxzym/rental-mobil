@@ -1,5 +1,4 @@
-"use client";
-
+import { Suspense } from "react";
 import Link from "next/link";
 import { FaUser } from "react-icons/fa";
 import { TbHeartHandshake } from "react-icons/tb";
@@ -33,7 +32,9 @@ export default function Home() {
                         Temukan Kenyamanan
                         <br /> Dalam Perjalanan Anda
                     </div>
-                    <SearchCard />
+                    <Suspense>
+                        <SearchCard />
+                    </Suspense>
                 </div>
             </div>
         </section>
