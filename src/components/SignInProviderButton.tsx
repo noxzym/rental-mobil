@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { Button } from "./ui/button";
 
 interface props {
@@ -6,9 +6,14 @@ interface props {
 }
 
 export default function SignInProviderButton({ provider }: props) {
+    console.log(provider);
     return (
-        <Button variant="outline" className="[&_svg]:size-5" asChild>
-            <Link href="#">{ProviderIcons[provider]}</Link>
+        <Button
+            variant="outline"
+            className="[&_svg]:size-5"
+            onClick={() => signIn(provider.toLowerCase())}
+        >
+            {ProviderIcons[provider]}
         </Button>
     );
 }
@@ -22,7 +27,7 @@ enum Provider {
 const ProviderIcons: Record<keyof typeof Provider, JSX.Element> = {
     Google: (
         <svg width="800px" height="800px" viewBox="-0.5 0 48 48">
-            <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                 <g id="Color-" transform="translate(-401.000000, -860.000000)">
                     <g id="Google" transform="translate(401.000000, 860.000000)">
                         <path
