@@ -11,6 +11,7 @@ import TimeDialog from "@/components/dialog/TimeDialog";
 
 export default function SearchCard() {
     const searchParams = useSearchParams();
+
     return (
         <Card className="w-2/5 rounded-xl p-2">
             <CardHeader>
@@ -27,8 +28,19 @@ export default function SearchCard() {
                 </div>
             </CardContent>
             <CardFooter>
-                <Button className="w-full" asChild>
-                    <Link href={`/search?${searchParams.toString()}`}>Ayo cari</Link>
+                <Button
+                    className="w-full bg-[#1877F2] text-background hover:bg-[rgba(11,95,204)]"
+                    asChild
+                >
+                    <Link
+                        href={
+                            searchParams.toString().length
+                                ? `/search?${searchParams.toString()}`
+                                : "/search"
+                        }
+                    >
+                        Ayo cari
+                    </Link>
                 </Button>
             </CardFooter>
         </Card>
