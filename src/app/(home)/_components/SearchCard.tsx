@@ -15,7 +15,7 @@ export default function SearchCard() {
     return (
         <Card className="w-2/5 rounded-xl p-2">
             <CardHeader>
-                <CardTitle>Tentukan Jadwalmu</CardTitle>
+                <CardTitle>Tentukan Tujuanmu</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="grid w-full items-center gap-4">
