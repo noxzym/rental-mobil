@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model kabukota {
+  id          String      @id @db.VarChar(4)
+  nama        String      @db.VarChar(50)
+  id_provinsi String      @db.VarChar(2)
+  provinsi    provinsi    @relation(fields: [id_provinsi], references: [id], onDelete: Cascade)
+  kecamatan   kecamatan[]
+}
+
+model kecamatan {
+  id          String      @id @db.VarChar(6)
+  nama        String      @db.VarChar(50)
+  id_kabukota String      @db.VarChar(4)
+  kabukota    kabukota    @relation(fields: [id_kabukota], references: [id], onDelete: Cascade)
+  kelurahan   kelurahan[]
+}
+
+model kelurahan {
+  id           String    @id @db.VarChar(10)
+  nama         String    @db.VarChar(50)
+  id_kecamatan String    @db.VarChar(6)
+  kecamatan    kecamatan @relation(fields: [id_kecamatan], references: [id], onDelete: Cascade)
+}
+
+model provinsi {
+  id       String     @id @db.VarChar(2)
+  nama     String     @db.VarChar(50)
+  kabukota kabukota[]
+}
