@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+"use client";
+
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { GoClockFill } from "react-icons/go";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/use-MediaQuery";
+import { useMediaQuery } from "@/hooks/use-mediaQuery";
+import { useQueryStore } from "@/hooks/use-queryStore";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import {
@@ -17,26 +20,15 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
-    searchParams: string;
     className?: string;
 }
 
-export default function DurationDialog({ searchParams, className }: prop) {
-    const router = useRouter();
+export default function DurationDialog({ className }: prop) {
     const pathname = usePathname();
-
     const [open, setOpen] = useState(false);
-    const [duration, setDuration] = useState<number>();
+
     const isDesktop = useMediaQuery("(min-width: 768px)");
-
-    useEffect(() => {
-        if (!duration) return;
-
-        const params = new URLSearchParams(searchParams);
-        params.set("duration", duration.toString());
-
-        router.push(`${pathname}?${params.toString()}`);
-    }, [duration, pathname, router, searchParams]);
+    const { durationStored, storeDurationState } = useQueryStore();
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Durasi Sewa";
@@ -58,7 +50,7 @@ export default function DurationDialog({ searchParams, className }: prop) {
     );
 
     function handleSelect(duration?: number) {
-        setDuration(duration! + 1);
+        storeDurationState(`${duration! + 1}`);
         setOpen(false);
     }
 
@@ -69,7 +61,7 @@ export default function DurationDialog({ searchParams, className }: prop) {
                 className={cn("justify-start font-semibold", className)}
             >
                 {!isSearchPage && <GoClockFill />}
-                {duration ?? 1} hari
+                {durationStored.length ? durationStored : 1} hari
             </Button>
         );
     }
@@ -78,7 +70,7 @@ export default function DurationDialog({ searchParams, className }: prop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{triggerButton()}</DialogTrigger>
-                <DialogContent className="py-10">
+                <DialogContent className="py-10" aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{title}</DialogTitle>
                     </DialogHeader>
@@ -91,7 +83,7 @@ export default function DurationDialog({ searchParams, className }: prop) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>{triggerButton()}</DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent aria-describedby={undefined}>
                 <DrawerHeader className="text-left">
                     <DrawerTitle className="text-2xl">{title}</DrawerTitle>
                 </DrawerHeader>

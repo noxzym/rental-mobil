@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useQueryStore } from "@/hooks/use-queryStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import DateDialog from "@/components/dialog/DateDialog";
 import DurationDialog from "@/components/dialog/DurationDialog";
 import LocationDialog from "@/components/dialog/LocationDialog";
-import ScheduleDialog from "@/components/dialog/ScheduleDialog";
 import TimeDialog from "@/components/dialog/TimeDialog";
 
 export default function SearchCard() {
-    const searchParams = useSearchParams().toString();
+    const { dateStored, durationStored, locationStored, timestored } = useQueryStore();
 
     return (
         <Card className="w-2/5 rounded-xl p-2">
@@ -19,12 +19,12 @@ export default function SearchCard() {
             </CardHeader>
             <CardContent>
                 <div className="grid w-full items-center gap-4">
-                    <LocationDialog searchParams={searchParams} />
+                    <LocationDialog />
                     <div className="flex w-full gap-2">
-                        <ScheduleDialog className="flex-grow" searchParams={searchParams} />
-                        <TimeDialog searchParams={searchParams} />
+                        <DateDialog className="flex-grow" />
+                        <TimeDialog />
                     </div>
-                    <DurationDialog searchParams={searchParams} />
+                    <DurationDialog />
                 </div>
             </CardContent>
             <CardFooter>
@@ -32,7 +32,17 @@ export default function SearchCard() {
                     className="w-full bg-[#1877F2] text-background hover:bg-[rgba(11,95,204)]"
                     asChild
                 >
-                    <Link href={`/search${searchParams.length ? `?${searchParams}` : ""}`}>
+                    <Link
+                        href={{
+                            pathname: "/search",
+                            query: {
+                                date: dateStored,
+                                duration: durationStored,
+                                location: locationStored,
+                                time: timestored
+                            }
+                        }}
+                    >
                         Ayo cari
                     </Link>
                 </Button>

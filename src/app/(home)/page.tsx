@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { FaUser } from "react-icons/fa";
 import { TbHeartHandshake } from "react-icons/tb";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import BrandLogo from "@/components/Logo";
 import SearchCard from "./_components/SearchCard";
 
-export default function Home() {
+export default function HomePage() {
     return (
         <section className="relative h-dvh min-h-[600px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops)),url('/assets/car-driver.jpg')] from-black/20 to-black/50 bg-cover bg-center bg-no-repeat">
             <nav className="absolute left-20 right-20 top-10 mx-auto flex items-center justify-between">
@@ -32,9 +31,7 @@ export default function Home() {
                         Temukan Kenyamanan
                         <br /> Dalam Perjalanan Anda
                     </div>
-                    <Suspense>
-                        <SearchCard />
-                    </Suspense>
+                    <SearchCard />
                 </div>
             </div>
         </section>

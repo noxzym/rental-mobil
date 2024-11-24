@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+"use client";
+
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 import { MdLocationOn } from "react-icons/md";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
+import { useQueryStore } from "@/hooks/use-queryStore";
 import { useWilayahQuery } from "@/hooks/use-wilayahQuery";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
@@ -21,37 +24,21 @@ import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 
 interface prop {
-    searchParams: string;
     className?: string;
 }
 
-export default function LocationDialog({ searchParams, className }: prop) {
+export default function LocationDialog({ className }: prop) {
+    const pathname = usePathname();
     const [open, setOpen] = useState(false);
-    const [location, setLocation] = useState<string>();
     const [inputValue, setInputValue] = useState<string>();
 
-    const inputDebouncedValue = useDebounce(inputValue);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const router = useRouter();
-    const pathname = usePathname();
+    const inputDebouncedValue = useDebounce(inputValue);
+    const { locationStored, storeLocationState } = useQueryStore();
 
     const { data } = useWilayahQuery({
-        inputDebouncedValue: open ? inputDebouncedValue?.toUpperCase() : location
+        inputDebouncedValue: open ? inputDebouncedValue?.toUpperCase() : locationStored
     });
-
-    useEffect(() => {
-        const params = new URLSearchParams(searchParams);
-        const locationQueryId = params.get("location");
-
-        if (locationQueryId && !location) {
-            return setLocation(locationQueryId);
-        }
-
-        const loc = data?.find(({ id }) => id === locationQueryId);
-        if (!loc) return;
-
-        setLocation(loc.nama.toLowerCase().replace("kab.", "kabupaten"));
-    }, [searchParams, data, location]);
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Kota Tujuan";
@@ -72,19 +59,19 @@ export default function LocationDialog({ searchParams, className }: prop) {
                 className={cn("justify-start font-semibold capitalize", className)}
             >
                 {!isSearchPage && <MdLocationOn />}
-                {location?.toLowerCase().replace("kab.", "kabupaten") ?? "Jakarta"}
+                {data
+                    ?.find(({ id }) => id === locationStored)
+                    ?.nama.toLowerCase()
+                    .replace("kab.", "kabupaten") ?? "Kota Depok"}
             </Button>
         );
     }
 
     function handleSelect(id: string) {
-        const selectedLocation = data?.find(({ id: locationId }) => locationId === id)?.nama;
-        setLocation(selectedLocation);
+        const selectedLocation = data?.find(({ id: locationId }) => locationId === id);
+        if (!selectedLocation) return;
 
-        const params = new URLSearchParams(searchParams);
-        params.set("location", id);
-        router.push(`${pathname}?${params.toString()}`);
-
+        storeLocationState(selectedLocation.id);
         setOpen(false);
     }
 
@@ -92,7 +79,10 @@ export default function LocationDialog({ searchParams, className }: prop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{triggerButton()}</DialogTrigger>
-                <DialogContent className="flex h-[400px] flex-col py-10">
+                <DialogContent
+                    className="flex h-[400px] flex-col py-10"
+                    aria-describedby={undefined}
+                >
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{title}</DialogTitle>
                         {input}
@@ -129,7 +119,10 @@ export default function LocationDialog({ searchParams, className }: prop) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>{triggerButton()}</DrawerTrigger>
-            <DrawerContent className="flex h-full max-h-[75vh] flex-col">
+            <DrawerContent
+                className="flex h-full max-h-[75vh] flex-col"
+                aria-describedby={undefined}
+            >
                 <DrawerHeader className="text-left">
                     <DrawerTitle className="text-2xl">{title}</DrawerTitle>
                     {input}

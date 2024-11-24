@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { GoClockFill } from "react-icons/go";
+"use client";
+
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
+import { useQueryStore } from "@/hooks/use-queryStore";
 import { Button } from "../ui/button";
 import {
     Dialog,
@@ -24,26 +26,15 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
-    searchParams: string;
     className?: string;
 }
 
-export default function TimeDialog({ searchParams, className }: prop) {
-    const router = useRouter();
+export default function TimeDialog({ className }: prop) {
     const pathname = usePathname();
-
     const [open, setOpen] = useState(false);
-    const [time, setTime] = useState<number>();
+
     const isDesktop = useMediaQuery("(min-width: 768px)");
-
-    useEffect(() => {
-        if (!time) return;
-
-        const params = new URLSearchParams(searchParams);
-        params.set("duration", time.toString());
-
-        router.push(`${pathname}?${params.toString()}`);
-    }, [time, pathname, router, searchParams]);
+    const { durationStored, storeDurationState } = useQueryStore();
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Waktu Penjemputan";
@@ -64,8 +55,8 @@ export default function TimeDialog({ searchParams, className }: prop) {
         </ScrollArea>
     );
 
-    function handleSelect(time?: number) {
-        setTime(time! + 1);
+    function handleSelect(duration?: number) {
+        storeDurationState(`${duration! + 1}`);
         setOpen(false);
     }
 
@@ -84,7 +75,7 @@ export default function TimeDialog({ searchParams, className }: prop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{triggerButton()}</DialogTrigger>
-                <DialogContent className="py-10">
+                <DialogContent className="py-10" aria-describedby={undefined}>
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{title}</DialogTitle>
                     </DialogHeader>
@@ -101,7 +92,7 @@ export default function TimeDialog({ searchParams, className }: prop) {
     return (
         <Drawer open={open} onOpenChange={setOpen}>
             <DrawerTrigger asChild>{triggerButton()}</DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent aria-describedby={undefined}>
                 <DrawerHeader className="text-left">
                     <DrawerTitle className="text-2xl">{title}</DrawerTitle>
                 </DrawerHeader>
