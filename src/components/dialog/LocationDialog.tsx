@@ -37,7 +37,8 @@ export default function LocationDialog({ className }: prop) {
     const { locationStored, storeLocationState } = useQueryStore();
 
     const { data } = useWilayahQuery({
-        inputDebouncedValue: open ? inputDebouncedValue?.toUpperCase() : locationStored
+        wilayahQuery:
+            open && inputDebouncedValue?.length ? inputDebouncedValue.toUpperCase() : locationStored
     });
 
     const isSearchPage = pathname === "/search";

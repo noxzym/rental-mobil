@@ -1,13 +1,20 @@
 import { Prisma } from "@prisma/client";
 import { createQuery } from "floppy-disk";
 
-type props = { inputDebouncedValue?: string };
-type returnType = Prisma.kabukotaGetPayload<{ include: { provinsi: true } }>[];
+type props = { wilayahQuery: string };
+type returnType = Prisma.kabukotaGetPayload<{
+    include: { provinsi: { select: { nama: true } } };
+}>[];
 
-export const useWilayahQuery = createQuery<props, returnType>(async ({ inputDebouncedValue }) => {
-    const res = await fetch(
-        `/api/wilayah${inputDebouncedValue?.length ? `?query=${inputDebouncedValue}` : ""}`
-    );
-    if (!res.ok) throw new Error("Failed to fetch data");
-    return res.json();
-});
+export const useWilayahQuery = createQuery<props, returnType>(
+    async ({ wilayahQuery }) => {
+        const res = await fetch(
+            `/api/wilayah${wilayahQuery?.length ? `?query=${wilayahQuery}` : ""}`
+        );
+        if (!res.ok) throw res;
+        return res.json();
+    },
+    {
+        fetchOnWindowFocus: false
+    }
+);
