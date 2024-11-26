@@ -8,30 +8,67 @@ datasource db {
 }
 
 model kabukota {
-  id          String      @id @db.VarChar(4)
-  nama        String      @db.VarChar(50)
-  id_provinsi String      @db.VarChar(2)
-  provinsi    provinsi    @relation(fields: [id_provinsi], references: [id], onDelete: Cascade)
-  kecamatan   kecamatan[]
+  id         String      @id @db.VarChar(4)
+  nama       String      @db.VarChar(50)
+  provinsiId String      @map("provinsi_id") @db.VarChar(2)
+  provinsi   provinsi    @relation(fields: [provinsiId], references: [id], onDelete: Cascade)
+  kecamatan  kecamatan[]
 }
 
 model kecamatan {
-  id          String      @id @db.VarChar(6)
-  nama        String      @db.VarChar(50)
-  id_kabukota String      @db.VarChar(4)
-  kabukota    kabukota    @relation(fields: [id_kabukota], references: [id], onDelete: Cascade)
-  kelurahan   kelurahan[]
+  id         String      @id @db.VarChar(6)
+  nama       String      @db.VarChar(50)
+  kabukotaId String      @map("kabukota_id") @db.VarChar(4)
+  kabukota   kabukota    @relation(fields: [kabukotaId], references: [id], onDelete: Cascade)
+  kelurahan  kelurahan[]
 }
 
 model kelurahan {
-  id           String    @id @db.VarChar(10)
-  nama         String    @db.VarChar(50)
-  id_kecamatan String    @db.VarChar(6)
-  kecamatan    kecamatan @relation(fields: [id_kecamatan], references: [id], onDelete: Cascade)
+  id          String    @id @db.VarChar(10)
+  nama        String    @db.VarChar(50)
+  kecamatanId String    @map("kecamatan_id") @db.VarChar(6)
+  kecamatan   kecamatan @relation(fields: [kecamatanId], references: [id], onDelete: Cascade)
+  user        user[]
 }
 
 model provinsi {
   id       String     @id @db.VarChar(2)
   nama     String     @db.VarChar(50)
   kabukota kabukota[]
+}
+
+model user {
+  id         String    @id @default(uuid())
+  email      String    @unique @db.VarChar(30)
+  password   String    @db.Text
+  first_name String    @db.VarChar(20)
+  last_name  String    @db.VarChar(20)
+  alamat     String    @db.VarChar(10)
+  no_telepon String    @db.VarChar(16)
+  admin      Boolean?
+  kelurahan  kelurahan @relation(fields: [alamat], references: [id])
+  booking    booking?
+}
+
+model mobil {
+  id      String    @id @default(uuid())
+  warna   String    @db.VarChar(10)
+  merek   String    @db.VarChar(10)
+  tipe    String    @db.VarChar(10)
+  tahun   String    @db.VarChar(5)
+  no_plat String    @db.VarChar(15)
+  harga   Int
+  status  Boolean
+  booking booking[]
+}
+
+model booking {
+  id        Int      @id @default(autoincrement())
+  user      user     @relation(fields: [userEmail], references: [email])
+  userEmail String   @unique @map("user_email")
+  mobil     mobil    @relation(fields: [mobilId], references: [id])
+  mobilId   String   @map("mobil_id")
+  start     DateTime @db.Date
+  end       DateTime @db.Date
+  driver    String?  @db.VarChar(30)
 }
