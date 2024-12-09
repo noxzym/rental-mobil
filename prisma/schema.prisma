@@ -3,15 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model kabukota {
   id         String      @id @db.VarChar(4)
   nama       String      @db.VarChar(50)
   provinsiId String      @map("provinsi_id") @db.VarChar(2)
-  provinsi   provinsi    @relation(fields: [provinsiId], references: [id], onDelete: Cascade)
+  provinsi   provinsi    @relation(fields: [provinsiId], references: [id], onDelete: Cascade, map: "kabukota_id_provinsi_fkey")
   kecamatan  kecamatan[]
 }
 
@@ -19,7 +20,7 @@ model kecamatan {
   id         String      @id @db.VarChar(6)
   nama       String      @db.VarChar(50)
   kabukotaId String      @map("kabukota_id") @db.VarChar(4)
-  kabukota   kabukota    @relation(fields: [kabukotaId], references: [id], onDelete: Cascade)
+  kabukota   kabukota    @relation(fields: [kabukotaId], references: [id], onDelete: Cascade, map: "kecamatan_id_kabukota_fkey")
   kelurahan  kelurahan[]
 }
 
@@ -27,8 +28,8 @@ model kelurahan {
   id          String    @id @db.VarChar(10)
   nama        String    @db.VarChar(50)
   kecamatanId String    @map("kecamatan_id") @db.VarChar(6)
-  kecamatan   kecamatan @relation(fields: [kecamatanId], references: [id], onDelete: Cascade)
-  user        user[]
+  account     account[]
+  kecamatan   kecamatan @relation(fields: [kecamatanId], references: [id], onDelete: Cascade, map: "kelurahan_id_kecamatan_fkey")
 }
 
 model provinsi {
@@ -37,24 +38,11 @@ model provinsi {
   kabukota kabukota[]
 }
 
-model user {
-  id         String    @id @default(uuid())
-  email      String    @unique @db.VarChar(30)
-  password   String    @db.Text
-  first_name String    @db.VarChar(20)
-  last_name  String    @db.VarChar(20)
-  alamat     String    @db.VarChar(10)
-  no_telepon String    @db.VarChar(16)
-  admin      Boolean?
-  kelurahan  kelurahan @relation(fields: [alamat], references: [id])
-  booking    booking?
-}
-
 model mobil {
-  id      String    @id @default(uuid())
+  id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   warna   String    @db.VarChar(10)
   merek   String    @db.VarChar(10)
-  tipe    String    @db.VarChar(10)
+  model   String    @db.VarChar(10)
   tahun   String    @db.VarChar(5)
   no_plat String    @db.VarChar(15)
   harga   Int
@@ -63,12 +51,25 @@ model mobil {
 }
 
 model booking {
-  id        Int      @id @default(autoincrement())
-  user      user     @relation(fields: [userEmail], references: [email])
-  userEmail String   @unique @map("user_email")
-  mobil     mobil    @relation(fields: [mobilId], references: [id])
-  mobilId   String   @map("mobil_id")
-  start     DateTime @db.Date
-  end       DateTime @db.Date
-  driver    String?  @db.VarChar(30)
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userEmail  String   @unique @map("user_email") @db.VarChar(30)
+  mobilId    String   @map("mobil_id") @db.Uuid
+  start_date DateTime @db.Date
+  end_date   DateTime @db.Date
+  driver     String?  @db.VarChar(30)
+  mobil      mobil    @relation(fields: [mobilId], references: [id], onDelete: Cascade)
+  user       account  @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+}
+
+model account {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String     @unique @db.VarChar(30)
+  password   String
+  first_name String?    @db.VarChar(20)
+  last_name  String?    @db.VarChar(20)
+  alamat     String?    @db.VarChar(10)
+  no_telepon String?    @db.VarChar(16)
+  admin      Boolean?
+  kelurahan  kelurahan? @relation(fields: [alamat], references: [id], onDelete: Cascade)
+  booking    booking?
 }
