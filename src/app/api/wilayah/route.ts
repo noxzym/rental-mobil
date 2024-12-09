@@ -50,7 +50,5 @@ export async function GET(req: Request) {
         }
     });
 
-    console.log(query);
-
     return Response.json(wilayah);
 }
