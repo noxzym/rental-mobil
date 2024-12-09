@@ -34,7 +34,7 @@ export default function TimeDialog({ className }: prop) {
     const [open, setOpen] = useState(false);
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const { durationStored, storeDurationState } = useQueryStore();
+    const duration = useQueryStore("duration");
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Waktu Penjemputan";
@@ -56,7 +56,7 @@ export default function TimeDialog({ className }: prop) {
     );
 
     function handleSelect(duration?: number) {
-        storeDurationState(`${duration! + 1}`);
+        useQueryStore.set({ duration: `${duration! + 1}` });
         setOpen(false);
     }
 

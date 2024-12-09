@@ -9,6 +9,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { useQueryStore } from "@/hooks/use-queryStore";
 import { useWilayahQuery } from "@/hooks/use-wilayahQuery";
+import { CustomInput } from "../CustomInput";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import {
@@ -20,7 +21,6 @@ import {
     DrawerTitle,
     DrawerTrigger
 } from "../ui/drawer";
-import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 
 interface prop {
@@ -30,26 +30,24 @@ interface prop {
 export default function LocationDialog({ className }: prop) {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
-    const [inputValue, setInputValue] = useState<string>();
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const inputDebouncedValue = useDebounce(inputValue);
-    const { locationStored, storeLocationState } = useQueryStore();
+    const location = useQueryStore("location");
+    const inputDebouncedValue = useDebounce(location);
 
     const { data } = useWilayahQuery({
-        wilayahQuery:
-            open && inputDebouncedValue?.length ? inputDebouncedValue.toUpperCase() : locationStored
+        wilayahQuery: open && inputDebouncedValue ? inputDebouncedValue.toUpperCase() : location
     });
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Kota Tujuan";
     const input = (
-        <Input
+        <CustomInput
             icon={<IoSearch />}
             type="text"
             placeholder="Bali"
             className="text-lg text-foreground"
-            onChange={e => setInputValue(e.target.value)}
+            onChange={e => useQueryStore.set({ location: e.target.value })}
         />
     );
 
@@ -61,7 +59,7 @@ export default function LocationDialog({ className }: prop) {
             >
                 {!isSearchPage && <MdLocationOn />}
                 {data
-                    ?.find(({ id }) => id === locationStored)
+                    ?.find(({ id }) => id === location)
                     ?.nama.toLowerCase()
                     .replace("kab.", "kabupaten") ?? "Kota Depok"}
             </Button>
@@ -72,7 +70,7 @@ export default function LocationDialog({ className }: prop) {
         const selectedLocation = data?.find(({ id: locationId }) => locationId === id);
         if (!selectedLocation) return;
 
-        storeLocationState(selectedLocation.id);
+        useQueryStore.set({ location: selectedLocation.id });
         setOpen(false);
     }
 

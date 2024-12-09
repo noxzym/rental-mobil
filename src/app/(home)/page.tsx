@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { FaUser } from "react-icons/fa";
 import { TbHeartHandshake } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
+import AuthButton from "@/components/AuthButton";
 import BrandLogo from "@/components/Logo";
-import SearchCard from "./_components/SearchCard";
+import SearchSection from "@/components/SearchSection";
 
-export default function HomePage() {
+export default async function HomePage() {
     return (
         <section className="relative h-dvh min-h-[600px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops)),url('/assets/car-driver.jpg')] from-black/20 to-black/50 bg-cover bg-center bg-no-repeat">
             <nav className="absolute left-20 right-20 top-10 mx-auto flex items-center justify-between">
@@ -18,11 +18,7 @@ export default function HomePage() {
                             <TbHeartHandshake /> Jadi Partner Kami
                         </Link>
                     </Button>
-                    <Button variant="secondary" asChild>
-                        <Link href="/sign-in">
-                            <FaUser /> Daftar / Masuk
-                        </Link>
-                    </Button>
+                    <AuthButton />
                 </div>
             </nav>
             <div className="absolute bottom-10 left-20 right-20">
@@ -31,7 +27,7 @@ export default function HomePage() {
                         Temukan Kenyamanan
                         <br /> Dalam Perjalanan Anda
                     </div>
-                    <SearchCard />
+                    <SearchSection />
                 </div>
             </div>
         </section>

@@ -28,7 +28,7 @@ export default function DurationDialog({ className }: prop) {
     const [open, setOpen] = useState(false);
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const { durationStored, storeDurationState } = useQueryStore();
+    const duration = useQueryStore("duration");
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Durasi Sewa";
@@ -50,7 +50,7 @@ export default function DurationDialog({ className }: prop) {
     );
 
     function handleSelect(duration?: number) {
-        storeDurationState(`${duration! + 1}`);
+        useQueryStore.set({ duration: `${duration! + 1}` });
         setOpen(false);
     }
 
@@ -61,7 +61,7 @@ export default function DurationDialog({ className }: prop) {
                 className={cn("justify-start font-semibold", className)}
             >
                 {!isSearchPage && <GoClockFill />}
-                {durationStored.length ? durationStored : 1} hari
+                {duration.length ? duration : 1} hari
             </Button>
         );
     }

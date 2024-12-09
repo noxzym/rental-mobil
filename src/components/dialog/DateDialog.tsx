@@ -29,7 +29,7 @@ export default function DateDialog({ className }: prop) {
     const [open, setOpen] = useState(false);
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const { dateStored, storeDateState } = useQueryStore();
+    const dateStored = useQueryStore("date");
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Tanggal Penjemputan";
@@ -49,7 +49,7 @@ export default function DateDialog({ className }: prop) {
     function handleSelect(date?: Date) {
         if (!date) return;
 
-        storeDateState(date?.getTime().toString());
+        useQueryStore.set({ date: date?.getTime().toString() });
         setOpen(false);
     }
 
