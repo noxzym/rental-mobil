@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { MdLogin } from "react-icons/md";
+import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import AuthButton from "@/components/AuthButton";
+import ButtonProvider from "@/components/ButtonProvider";
 import EmailForm from "@/components/EmailForm";
 
 export default async function SignUpPage() {
-    const session = await getServerSession();
+    const session = await auth();
+
     if (session) redirect("/");
 
     return (
@@ -20,13 +21,11 @@ export default async function SignUpPage() {
                 <EmailForm />
                 <div className="flex w-full items-center">
                     <hr className="flex-1 border-foreground/20" />
-                    <p className="mx-2 text-foreground/60">atau</p>
-                    <hr className="flex-1 border-foreground/20" />
                 </div>
                 <div className="grid w-full grid-cols-3 gap-2">
-                    <AuthButton provider="Google" />
-                    <AuthButton provider="Facebook" />
-                    <AuthButton provider="Apple" />
+                    <ButtonProvider provider="Google" />
+                    <ButtonProvider provider="Facebook" />
+                    <ButtonProvider provider="Apple" />
                 </div>
                 <div className="flex items-center justify-center gap-1 pt-4">
                     <p>Sudah punya akun?</p>

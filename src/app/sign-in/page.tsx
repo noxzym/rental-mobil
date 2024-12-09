@@ -1,14 +1,26 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { MdLogin } from "react-icons/md";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
-import AuthButton from "@/components/AuthButton";
+import ButtonProvider from "@/components/ButtonProvider";
 import EmailForm from "@/components/EmailForm";
 
 export default async function SignInPage() {
-    const session = await getServerSession();
-    if (session) redirect("/");
+    const session = await auth();
+
+    if (session) {
+        const ifExists = await prisma.account.findUnique({
+            where: {
+                email: session?.user?.email ?? ""
+            }
+        });
+
+        if (!ifExists) redirect("/sign-up");
+
+        redirect("/");
+    }
 
     return (
         <section className="container mx-auto flex min-h-screen items-center justify-center">
@@ -24,9 +36,9 @@ export default async function SignInPage() {
                     <hr className="flex-1 border-foreground/20" />
                 </div>
                 <div className="grid w-full grid-cols-3 gap-2">
-                    <AuthButton provider="Google" />
-                    <AuthButton provider="Facebook" />
-                    <AuthButton provider="Apple" />
+                    <ButtonProvider provider="Google" />
+                    <ButtonProvider provider="Facebook" />
+                    <ButtonProvider provider="Apple" />
                 </div>
                 <div className="flex items-center justify-center gap-1 pt-4">
                     <p>Belum punya akun?</p>
