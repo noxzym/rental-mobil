@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { TbHeartHandshake } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,9 @@ export default async function HomePage() {
                         Temukan Kenyamanan
                         <br /> Dalam Perjalanan Anda
                     </div>
-                    <SearchSection />
+                    <Suspense>
+                        <SearchSection />
+                    </Suspense>
                 </div>
             </div>
         </section>
