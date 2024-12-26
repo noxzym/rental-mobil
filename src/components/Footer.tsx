@@ -4,7 +4,7 @@ import Logo from "./Logo";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#1877F2] px-20 pt-16 text-background">
+        <footer className="bg-foreground px-20 pt-16 text-background">
             <div className="container flex justify-between px-0">
                 <section>
                     <Logo textColor="#FFFFFF" dotColor="#FFB534" />
