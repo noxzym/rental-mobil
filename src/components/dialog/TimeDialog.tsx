@@ -24,6 +24,7 @@ import {
     DrawerTrigger
 } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
+import { IoTime } from "react-icons/io5";
 
 interface prop {
     className?: string;
@@ -34,29 +35,29 @@ export default function TimeDialog({ className }: prop) {
     const [open, setOpen] = useState(false);
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const duration = useQueryStore("duration");
+    const time = useQueryStore("time");
 
     const isSearchPage = pathname === "/search";
     const title = "Pilih Waktu Penjemputan";
     const content = (
         <ScrollArea className="h-full">
             <div className="grid grid-cols-3 items-center justify-center gap-2 md:grid-cols-5">
-                {new Array(30).fill(0).map((_, i) => (
+                {new Array(24).fill(0).map((_, i) => (
                     <Button
                         key={i}
                         variant="outline"
                         className="justify-center font-semibold"
                         onClick={handleSelect.bind(null, i)}
                     >
-                        {i + 1} hari
+                        {i}:00
                     </Button>
                 ))}
             </div>
         </ScrollArea>
     );
 
-    function handleSelect(duration?: number) {
-        useQueryStore.set({ duration: `${duration! + 1}` });
+    function handleSelect(time?: number) {
+        useQueryStore.set({ time: `${time!}` });
         setOpen(false);
     }
 
@@ -66,7 +67,8 @@ export default function TimeDialog({ className }: prop) {
                 variant={isSearchPage ? "ghost" : "outline"}
                 className={cn("justify-start font-semibold", className)}
             >
-                17:00
+                {!isSearchPage && <IoTime />}
+                {time.length? time : 1}:00
             </Button>
         );
     }
