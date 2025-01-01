@@ -10,6 +10,7 @@ interface User {
   email: string;
   no_telepon: string | null;
   alamat?: string;
+  jl_no_rt_rw?: string;
 }
 
 export default function UserManagement() {
@@ -94,7 +95,8 @@ export default function UserManagement() {
         <div className="w-1/2 border-l">
           <UserDetail 
             userId={selectedUserId}
-            userData={selectedUserData}
+            // @ts-ignore
+            userData={selectedUserData!}
             onClose={() => {
               setSelectedUserId(null);
               setSelectedUserData(undefined);

@@ -149,7 +149,7 @@ export const authConfig: NextAuthOptions = {
             
             if (user) {
                 token.id = user.id;
-                token.admin = user.admin;
+                // token.admin = user.admin;
                 token.email = user.email;
             }
             return token;

@@ -140,9 +140,9 @@ export default function CustProfile() {
     try {
       const response = await fetch('/api/cust-profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
         body: JSON.stringify({
           email: session.user.email,
           ...editData,
