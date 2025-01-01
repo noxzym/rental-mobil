@@ -75,7 +75,7 @@ export default function EmailForm() {
         }
 
         await signIn("credentials", {
-            callbackUrl: "/dashboard/user",
+            callbackUrl: "/",
             ...loginOD
         });
     }
