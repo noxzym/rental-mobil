@@ -7,9 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getBookingDates(timestamp: number, duration: number) {
     const startDate = new Date(timestamp);
-    const intervalOfRenting = (duration * 86400000) + 86400000;
+    const intervalOfRenting = duration * 86400000 + 86400000;
     const endDate = new Date(timestamp + intervalOfRenting);
-    
+
     return {
         startDate,
         endDate

@@ -4,7 +4,7 @@ type SearchParams = {
     location?: string;
     time?: string;
     sort?: string;
-    order?: 'asc' | 'desc';
+    order?: "asc" | "desc";
 };
 
 type Car = {

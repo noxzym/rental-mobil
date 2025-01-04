@@ -15,42 +15,42 @@ export default function Sidebar({ setActivePage }: SidebarProps) {
             <nav className="space-y-2">
                 <button
                     onClick={() => setActivePage("dashboard")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <Home size={20} />
                     <span>Dashboard</span>
                 </button>
                 <button
                     onClick={() => setActivePage("cars")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <Car size={20} />
                     <span>Car Management</span>
                 </button>
                 <button
                     onClick={() => setActivePage("orders")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <ClipboardList size={20} />
                     <span>Order Management</span>
                 </button>
                 <button
                     onClick={() => setActivePage("users")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <Users size={20} />
                     <span>User Management</span>
                 </button>
                 <button
                     onClick={() => setActivePage("reviews")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <MessageSquare size={20} />
                     <span>Reviews List</span>
                 </button>
                 <button
                     onClick={() => setActivePage("chat")}
-                    className="flex items-center gap-2 rounded p-2 hover:bg-blue-50 w-full text-left"
+                    className="flex w-full items-center gap-2 rounded p-2 text-left hover:bg-blue-50"
                 >
                     <MessageCircleMore size={20} />
                     <span>Chat From User</span>

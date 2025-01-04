@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "./_components/Sidebar";
-import CustProfile from "./_components/CustProfile";
 import CustOrderManagement from "./_components/CustOrderManagement";
+import CustProfile from "./_components/CustProfile";
 import CustReviewList from "./_components/CustReviewList";
+import Sidebar from "./_components/Sidebar";
 
 export default function CustomerDashboard() {
     const [activePage, setActivePage] = useState<string>("profile");
@@ -34,19 +34,18 @@ export default function CustomerDashboard() {
                     <>
                         <h2>Chat</h2>
                     </>
-                )
+                );
             default:
                 return <div>Select a page</div>;
         }
-    }
+    };
 
-    return(
+    return (
         <div className="flex min-h-screen bg-gray-50">
             <Sidebar setActivePage={setActivePage} />
             <div className="flex-1">
                 <main className="p-6">{renderContent()}</main>
             </div>
         </div>
-
-    )
+    );
 }

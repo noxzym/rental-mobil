@@ -11,10 +11,10 @@ export default function SearchPage() {
                     <SearchSection />
                 </Suspense>
                 <div className="z-0 grid w-full grid-cols-4 justify-between gap-5">
-                <Suspense>
-                    <Aside />
-                    <ListCar />
-                </Suspense>
+                    <Suspense>
+                        <Aside />
+                        <ListCar />
+                    </Suspense>
                 </div>
             </div>
         </section>

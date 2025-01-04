@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export default function ListCar() {
     const [cars, setCars] = useState<Car[]>([]);
     const searchParams = useSearchParams();
-    const sort = searchParams.get('sort') || 'harga';
-    const order = searchParams.get('order') || 'asc';
+    const sort = searchParams.get("sort") || "harga";
+    const order = searchParams.get("order") || "asc";
 
     useEffect(() => {
         const fetchCars = async () => {
@@ -25,7 +25,7 @@ export default function ListCar() {
 
     return (
         <section className="col-span-3 grid w-full gap-3">
-            {cars.map((car) => (
+            {cars.map(car => (
                 <div
                     key={car.id}
                     className="flex w-full items-center justify-between rounded-xl bg-background px-4 py-5 shadow"
@@ -35,11 +35,13 @@ export default function ListCar() {
                             {car.image ? (
                                 <Image src={car.image} alt={`${car.merek} ${car.model}`} fill />
                             ) : (
-                                <div className="w-full h-full bg-gray-200" />
+                                <div className="h-full w-full bg-gray-200" />
                             )}
                         </span>
                         <div className="ml-5 flex flex-col text-sm">
-                            <p className="font-bold">{car.merek} {car.model}</p>
+                            <p className="font-bold">
+                                {car.merek} {car.model}
+                            </p>
                             <p>{car.tahun}</p>
                             <p>{car.warna}</p>
                         </div>
@@ -47,7 +49,7 @@ export default function ListCar() {
                     <div className="flex self-end">
                         <div className="flex">
                             <p className="text-2xl font-bold">
-                                IDR {car.harga.toLocaleString('id-ID')}
+                                IDR {car.harga.toLocaleString("id-ID")}
                             </p>
                             <p className="self-end text-sm"> / hari</p>
                         </div>

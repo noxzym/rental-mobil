@@ -23,19 +23,19 @@ export default function OrderedCarsList() {
     const [cars, setCars] = useState<Car[]>([]);
 
     useEffect(() => {
-      const fetchCars = async () => {
-        try {
-            const response = await fetch(`/api/cars?queryType=status&status=ordered`);
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Failed to fetch cars");
+        const fetchCars = async () => {
+            try {
+                const response = await fetch(`/api/cars?queryType=status&status=ordered`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Failed to fetch cars");
+                }
+                const data = await response.json();
+                setCars(data);
+            } catch (error) {
+                console.error("Error fetching cars:", error);
             }
-            const data = await response.json();
-            setCars(data);
-        } catch (error) {
-            console.error("Error fetching cars:", error);
-        }
-    };
+        };
 
         fetchCars();
     }, []);
@@ -46,12 +46,9 @@ export default function OrderedCarsList() {
                 <h2 className="mb-4 text-xl font-semibold">In Ordered Cars</h2>
                 <div className="space-y-4">
                     {cars.map(car => (
-                        <Card
-                            key={car.id}
-                            className="flex items-center justify-between p-4"
-                        >
+                        <Card key={car.id} className="flex items-center justify-between p-4">
                             <div className="flex items-center gap-4">
-                                <div className="w-24 h-16 rounded overflow-hidden relative bg-gray-200">
+                                <div className="relative h-16 w-24 overflow-hidden rounded bg-gray-200">
                                     {car.image ? (
                                         <Image
                                             src={car.image}

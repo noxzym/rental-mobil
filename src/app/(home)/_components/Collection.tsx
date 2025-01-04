@@ -1,13 +1,13 @@
+import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import IconHonda from "@/components/brand/Honda";
-import IconToyota from "@/components/brand/Toyota";
 import IconHyundai from "@/components/brand/Hyundai";
-import IconSuzuki from "@/components/brand/Suzuki";
-import IconMitsubishi from "@/components/brand/Mitsubishi";
 import IconMercedes from "@/components/brand/Mercedes";
+import IconMitsubishi from "@/components/brand/Mitsubishi";
 import IconNissan from "@/components/brand/Nissan";
-import prisma from "@/lib/prisma";
+import IconSuzuki from "@/components/brand/Suzuki";
+import IconToyota from "@/components/brand/Toyota";
 
 type Car = {
     id: string;
@@ -28,7 +28,7 @@ async function getCars() {
             },
             take: 6,
             orderBy: {
-                tahun: 'asc'
+                tahun: "asc"
             },
             select: {
                 id: true,
@@ -38,7 +38,7 @@ async function getCars() {
                 tahun: true,
                 bangku: true,
                 harga: true,
-                image: true,
+                image: true
             }
         });
         return cars;
@@ -50,15 +50,15 @@ async function getCars() {
 
 function BrandIcon({ brand }: { brand: string }) {
     const iconProps = "size-7 text-foreground";
-    
+
     switch (brand.toLowerCase()) {
-        case 'honda':
+        case "honda":
             return <IconHonda className={iconProps} />;
-        case 'toyota':
+        case "toyota":
             return <IconToyota className={iconProps} />;
-        case 'daihatsu':
+        case "daihatsu":
             return <IconHonda className={iconProps} />;
-        case 'mitsubishi':
+        case "mitsubishi":
             return <IconMitsubishi className={iconProps} />;
         default:
             return <IconHonda className={iconProps} />; // Default fallback
@@ -66,11 +66,11 @@ function BrandIcon({ brand }: { brand: string }) {
 }
 
 function formatPrice(price: number) {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 0
     }).format(price);
 }
 
@@ -81,17 +81,19 @@ export default async function CollectionSection() {
         <section className="flex w-full flex-col items-center gap-10">
             <p className="text-3xl font-bold">Koleksi Kami</p>
             <div className="grid w-full grid-cols-3 grid-rows-2 gap-5">
-                {cars.map((car) => (
+                {cars.map(car => (
                     <div
                         key={car.id}
                         className="flex flex-col gap-5 overflow-hidden rounded-xl border-1 pb-5"
                     >
                         <span className="aspect-video w-full bg-foreground/10">
-                            {car.image && <img 
-                                src={car.image} 
-                                alt={car.model} 
-                                className="w-full h-full object-cover"
-                            />}
+                            {car.image && (
+                                <img
+                                    src={car.image}
+                                    alt={car.model}
+                                    className="h-full w-full object-cover"
+                                />
+                            )}
                         </span>
                         <div className="flex items-center gap-2 px-5">
                             <span className="rounded-full border-1 p-1.5">

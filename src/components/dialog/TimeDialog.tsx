@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { IoTime } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { useQueryStore } from "@/hooks/use-queryStore";
@@ -24,7 +25,6 @@ import {
     DrawerTrigger
 } from "../ui/drawer";
 import { ScrollArea } from "../ui/scroll-area";
-import { IoTime } from "react-icons/io5";
 
 interface prop {
     className?: string;
@@ -68,7 +68,7 @@ export default function TimeDialog({ className }: prop) {
                 className={cn("justify-start font-semibold", className)}
             >
                 {!isSearchPage && <IoTime />}
-                {time.length? time : 1}:00
+                {time.length ? time : 1}:00
             </Button>
         );
     }
