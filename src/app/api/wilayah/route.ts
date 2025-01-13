@@ -1,7 +1,8 @@
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: Request) {
-    const { searchParams } = new URL(req.url);
+export async function GET(request: NextRequest) {
+    const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("query");
 
     if (!query) {
@@ -16,7 +17,7 @@ export async function GET(req: Request) {
             }
         });
 
-        return Response.json(wilayah);
+        return NextResponse.json(wilayah);
     }
 
     const wilayah = await prisma.kabukota.findMany({
@@ -29,13 +30,15 @@ export async function GET(req: Request) {
                 },
                 {
                     nama: {
-                        contains: query
+                        contains: query,
+                        mode: "insensitive"
                     }
                 },
                 {
                     provinsi: {
                         nama: {
-                            contains: query
+                            contains: query,
+                            mode: "insensitive"
                         }
                     }
                 }
@@ -50,5 +53,5 @@ export async function GET(req: Request) {
         }
     });
 
-    return Response.json(wilayah);
+    return NextResponse.json(wilayah);
 }

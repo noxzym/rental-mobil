@@ -7,15 +7,17 @@ import IconSuzuki from "@/components/brand/Suzuki";
 import IconToyota from "@/components/brand/Toyota";
 
 export default function CarLogo() {
+    const className = "size-10 text-foreground/30";
+
     return (
         <section className="container flex justify-evenly py-10">
-            <IconHonda className="size-10 text-foreground/30" />
-            <IconHyundai className="size-10 text-foreground/30" />
-            <IconMercedes className="size-10 text-foreground/30" />
-            <IconMitsubishi className="size-10 text-foreground/30" />
-            <IconNissan className="size-10 text-foreground/30" />
-            <IconSuzuki className="size-10 text-foreground/30" />
-            <IconToyota className="size-10 text-foreground/30" />
+            <IconHonda className={className} />
+            <IconHyundai className={className} />
+            <IconMercedes className={className} />
+            <IconMitsubishi className={className} />
+            <IconNissan className={className} />
+            <IconSuzuki className={className} />
+            <IconToyota className={className} />
         </section>
     );
 }

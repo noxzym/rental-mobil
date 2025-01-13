@@ -11,7 +11,7 @@ export async function checkAdmin() {
 
     if (!session.user?.admin) {
         console.log("User is not admin:", session.user);
-        redirect("/unauthorized");
+        // redirect("/unauthorized");
     }
 
     return session;

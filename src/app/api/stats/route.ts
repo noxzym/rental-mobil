@@ -8,12 +8,14 @@ export async function GET() {
         // Fetch Total Pendapatan with duration calculation
         const completedBookings = await prisma.booking.findMany({
             where: {
-                end_date: { lt: today },
-                canceled: false
+                endDate: { lt: today },
+                status: {
+                    not: "CANCELED"
+                }
             },
             select: {
-                start_date: true,
-                end_date: true,
+                startDate: true,
+                endDate: true,
                 mobil: {
                     select: {
                         harga: true
@@ -26,8 +28,8 @@ export async function GET() {
             if (!booking.mobil?.harga) return total;
 
             // Calculate duration in days
-            const startDate = new Date(booking.start_date);
-            const endDate = new Date(booking.end_date);
+            const startDate = new Date(booking.startDate);
+            const endDate = new Date(booking.endDate);
             const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             const duration = diffDays === 0 ? 1 : diffDays + 1; // Add 1 to include both start and end days
@@ -40,7 +42,9 @@ export async function GET() {
         // Fetch Total Pemesanan
         const totalPemesanan = await prisma.booking.count({
             where: {
-                canceled: false
+                status: {
+                    not: "CANCELED"
+                }
             }
         });
 
@@ -53,9 +57,11 @@ export async function GET() {
 
         const mobilTerpakai = await prisma.booking.count({
             where: {
-                start_date: { lte: todayEnd },
-                end_date: { gte: todayStart },
-                canceled: false
+                startDate: { lte: todayEnd },
+                endDate: { gte: todayStart },
+                status: {
+                    not: "CANCELED"
+                }
             }
         });
 

@@ -24,11 +24,17 @@ export async function GET(request: NextRequest) {
             const booking = await prisma.booking.findFirst({
                 where: {
                     id,
-                    userEmail: session.user.email
+                    account: {
+                        email: session.user.email
+                    }
                 },
                 include: {
                     mobil: true,
-                    kabukota: true
+                    kabukota: {
+                        include: {
+                            provinsi: true
+                        }
+                    }
                 }
             });
 
@@ -42,31 +48,33 @@ export async function GET(request: NextRequest) {
         // Otherwise, fetch list of bookings
         const bookings = await prisma.booking.findMany({
             where: {
-                userEmail: session.user.email,
-                ...(status === "completed" && { end_date: { lt: new Date() }, canceled: false }),
-                ...(status === "inProgress" && {
-                    start_date: { lte: new Date() },
-                    end_date: { gte: new Date() },
-                    canceled: false
+                account: { email: session.user.email },
+                ...(status === "completed" && {
+                    endDate: { lt: new Date() },
+                    status: {
+                        not: "CANCELED"
+                    }
                 }),
-                ...(status === "incoming" && { start_date: { gt: new Date() }, canceled: false }),
-                ...(status === "canceled" && { canceled: true })
+                ...(status === "inProgress" && {
+                    startDate: { lte: new Date() },
+                    endDate: { gte: new Date() },
+                    status: {
+                        not: "CANCELED"
+                    }
+                }),
+                ...(status === "incoming" && {
+                    startDate: { gt: new Date() },
+                    status: {
+                        not: "CANCELED"
+                    }
+                }),
+                ...(status === "canceled" && { status: "CANCELED" })
             },
             include: {
-                mobil: {
-                    select: {
-                        id: true,
-                        merek: true,
-                        model: true,
-                        warna: true,
-                        no_plat: true,
-                        harga: true // Add this line
-                    }
-                },
-                kabukota: true
+                mobil: true
             },
             orderBy: {
-                start_date: "desc"
+                startDate: "desc"
             }
         });
 

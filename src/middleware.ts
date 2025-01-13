@@ -1,39 +1,26 @@
-import { NextResponse } from "next/server";
-import { withAuth } from "next-auth/middleware";
+import { MiddlewareConfig, NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Add this to see exactly what's happening
-export default withAuth(
-    async function middleware(req) {
-        // console.log("Middleware executing");
+const AdminPath = ["/dashboard/overview", "/dashboard/manage", "/dashboard/reviews"];
+const CustomerPath = ["/dashboard/profile", "/dashboard/orders", "/dashboard/cart"];
 
-        const pathname = req.nextUrl.pathname;
-        const token = req.nextauth.token;
-
-        // console.log({
-        //   pathname,
-        //   token,
-        //   isAdmin: token?.admin
-        // });
-
-        if (pathname.startsWith("/admin-dashboard")) {
-            if (!token?.admin) {
-                // console.log("Redirecting - not admin");
-                return NextResponse.redirect(new URL("/unauthorized", req.url));
-            }
-        }
-
-        return NextResponse.next();
-    },
-    {
-        callbacks: {
-            authorized: ({ token }) => {
-                // console.log("Auth callback token:", token);
-                return !!token;
-            }
-        }
-    }
-);
-
-export const config = {
-    matcher: ["/admin-dashboard/:path*"]
+export const config: MiddlewareConfig = {
+    matcher: "/dashboard/:path*"
 };
+
+export default async function middleware(req: NextRequest) {
+    const token = await getToken({ req });
+    if (!token) {
+        return NextResponse.rewrite(new URL("/sign-in", req.url));
+    }
+
+    const pathname = req.nextUrl.pathname;
+    const isAdminPage = AdminPath.includes(pathname);
+    const isCustomerPage = CustomerPath.includes(pathname);
+
+    if ((!token?.isAdmin && isAdminPage) || (token?.isAdmin && isCustomerPage)) {
+        return NextResponse.rewrite(new URL("/dashboard", req.url));
+    }
+
+    return NextResponse.next();
+}

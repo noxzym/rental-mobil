@@ -1,100 +1,73 @@
-import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import IconChevrolet from "@/components/brand/Chevrolet";
 import IconHonda from "@/components/brand/Honda";
 import IconHyundai from "@/components/brand/Hyundai";
+import IconMazda from "@/components/brand/Mazda";
 import IconMercedes from "@/components/brand/Mercedes";
 import IconMitsubishi from "@/components/brand/Mitsubishi";
 import IconNissan from "@/components/brand/Nissan";
 import IconSuzuki from "@/components/brand/Suzuki";
 import IconToyota from "@/components/brand/Toyota";
 
-type Car = {
-    id: string;
-    warna: string;
-    merek: string;
-    model: string;
-    tahun: string;
-    bangku: number;
-    harga: number;
-    image: string | null;
+type props = {
+    mobil: Prisma.mobilGetPayload<{}>[];
 };
 
-async function getCars() {
-    try {
-        const cars = await prisma.mobil.findMany({
-            where: {
-                status: true // Only show available cars
-            },
-            take: 6,
-            orderBy: {
-                tahun: "asc"
-            },
-            select: {
-                id: true,
-                warna: true,
-                merek: true,
-                model: true,
-                tahun: true,
-                bangku: true,
-                harga: true,
-                image: true
-            }
-        });
-        return cars;
-    } catch (error) {
-        console.error("Error fetching cars:", error);
-        return [];
+export default async function CollectionSection({ mobil }: props) {
+    function BrandIcon({ brand }: { brand: string }) {
+        const iconProps = "size-7 text-foreground";
+
+        switch (brand.toLowerCase()) {
+            case "chevrolet":
+                return <IconChevrolet className={iconProps} />;
+            case "honda":
+                return <IconHonda className={iconProps} />;
+            case "hyundai":
+                return <IconHyundai className={iconProps} />;
+            case "mazda":
+                return <IconMazda className={iconProps} />;
+            case "mercedes":
+                return <IconMercedes className={iconProps} />;
+            case "mitsubishi":
+                return <IconMitsubishi className={iconProps} />;
+            case "nissan":
+                return <IconNissan className={iconProps} />;
+            case "suzuki":
+                return <IconSuzuki className={iconProps} />;
+            case "toyota":
+                return <IconToyota className={iconProps} />;
+        }
     }
-}
 
-function BrandIcon({ brand }: { brand: string }) {
-    const iconProps = "size-7 text-foreground";
-
-    switch (brand.toLowerCase()) {
-        case "honda":
-            return <IconHonda className={iconProps} />;
-        case "toyota":
-            return <IconToyota className={iconProps} />;
-        case "daihatsu":
-            return <IconHonda className={iconProps} />;
-        case "mitsubishi":
-            return <IconMitsubishi className={iconProps} />;
-        default:
-            return <IconHonda className={iconProps} />; // Default fallback
+    function formatPrice(price: number) {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(price);
     }
-}
-
-function formatPrice(price: number) {
-    return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(price);
-}
-
-export default async function CollectionSection() {
-    const cars = await getCars();
 
     return (
         <section className="flex w-full flex-col items-center gap-10">
             <p className="text-3xl font-bold">Koleksi Kami</p>
-            <div className="grid w-full grid-cols-3 grid-rows-2 gap-5">
-                {cars.map(car => (
+            <div className="grid w-full grid-rows-2 gap-5 md:grid-cols-3">
+                {mobil.map(car => (
                     <div
                         key={car.id}
                         className="flex flex-col gap-5 overflow-hidden rounded-xl border-1 pb-5"
                     >
-                        <span className="aspect-video w-full bg-foreground/10">
-                            {car.image && (
-                                <img
-                                    src={car.image}
-                                    alt={car.model}
-                                    className="h-full w-full object-cover"
-                                />
-                            )}
-                        </span>
+                        <Avatar className="aspect-video h-auto w-full !rounded-none">
+                            <AvatarImage
+                                src={car.gambar}
+                                alt={`${car.merek} ${car.model}`}
+                                className="bg-foreground/10 object-cover"
+                            />
+                            <AvatarFallback useDynamicLoader={true} />
+                        </Avatar>
                         <div className="flex items-center gap-2 px-5">
                             <span className="rounded-full border-1 p-1.5">
                                 <BrandIcon brand={car.merek} />
@@ -102,7 +75,7 @@ export default async function CollectionSection() {
                             <div className="flex flex-col">
                                 <p className="text-lg font-bold">{car.model}</p>
                                 <p className="text-sm font-medium text-foreground/60">
-                                    Manual - {car.tahun}
+                                    {car.transmisi} - {car.tahun}
                                 </p>
                             </div>
                         </div>

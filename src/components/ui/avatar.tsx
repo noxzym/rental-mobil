@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
+import DynamicLoader from "../DynamicLoader";
 
 const Avatar = React.forwardRef<
     React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -30,16 +31,19 @@ AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
 const AvatarFallback = React.forwardRef<
     React.ElementRef<typeof AvatarPrimitive.Fallback>,
-    React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> & { useDynamicLoader?: boolean }
+>(({ useDynamicLoader = false, className, ...props }, ref) => (
     <AvatarPrimitive.Fallback
         ref={ref}
         className={cn(
-            "flex h-full w-full items-center justify-center rounded-full bg-muted",
+            "h-full w-full",
+            !useDynamicLoader && "flex items-center justify-center rounded-full bg-muted",
             className
         )}
         {...props}
-    />
+    >
+        {useDynamicLoader && <DynamicLoader className="h-full w-full" count={1} />}
+    </AvatarPrimitive.Fallback>
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 

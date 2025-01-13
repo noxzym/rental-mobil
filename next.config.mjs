@@ -7,6 +7,15 @@ const nextConfig = {
                 hostname: "*"
             }
         ]
+    },
+    async redirects() {
+        return [
+            {
+                source: "/dashboard/manage",
+                destination: "/dashboard/manage/car",
+                permanent: true
+            }
+        ];
     }
 };
 

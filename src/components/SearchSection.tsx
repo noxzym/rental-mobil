@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
-import { useQueryStore } from "@/hooks/use-queryStore";
+import { useQueryStore } from "@/hooks/floppy-disk/use-queryStore";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import SearchButton from "@/components/SearchButton";
 import DateDialog from "@/components/dialog/DateDialog";
@@ -48,7 +48,7 @@ export default function SearchSection() {
     }
 
     return (
-        <Card className="w-2/5 rounded-xl p-2">
+        <Card className="rounded-xl p-2 md:w-2/5">
             <CardHeader>
                 <CardTitle>Tentukan Tujuanmu</CardTitle>
             </CardHeader>

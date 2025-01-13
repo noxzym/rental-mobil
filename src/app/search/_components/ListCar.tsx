@@ -1,27 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useCarQuery } from "@/hooks/floppy-disk/use-carQuery";
+import { useFilterStore } from "@/hooks/floppy-disk/use-filterStore";
 
 export default function ListCar() {
-    const [cars, setCars] = useState<Car[]>([]);
-    const searchParams = useSearchParams();
-    const sort = searchParams.get("sort") || "harga";
-    const order = searchParams.get("order") || "asc";
+    const sortBy = useFilterStore("sortBy");
+    const orderBy = useFilterStore("orderBy");
 
-    useEffect(() => {
-        const fetchCars = async () => {
-            const queryString = searchParams.toString();
-            const response = await fetch(`/api/cars?${queryString}`);
-            const data = await response.json();
-            if (Array.isArray(data)) {
-                setCars(data);
-            }
-        };
+    const { data } = useCarQuery({
+        orderBy,
+        sortBy,
+        available: true
+    });
 
-        fetchCars();
-    }, [searchParams]);
+    const cars = data || [];
 
     return (
         <section className="col-span-3 grid w-full gap-3">
@@ -32,8 +25,8 @@ export default function ListCar() {
                 >
                     <div className="flex">
                         <span className="relative aspect-video h-auto w-40 rounded-lg">
-                            {car.image ? (
-                                <Image src={car.image} alt={`${car.merek} ${car.model}`} fill />
+                            {car.gambar ? (
+                                <Image src={car.gambar} alt={`${car.merek} ${car.model}`} fill />
                             ) : (
                                 <div className="h-full w-full bg-gray-200" />
                             )}

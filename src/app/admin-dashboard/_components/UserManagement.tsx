@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
+import { Prisma } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import UserDetail from "./UserDetail";
 
-interface User {
-    id: string;
-    nama_panjang: string;
-    email: string;
-    no_telepon: string | null;
-    alamat?: string;
-    jl_no_rt_rw?: string;
-}
+type User = Prisma.accountGetPayload<{}>;
 
 export default function UserManagement() {
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -46,9 +40,9 @@ export default function UserManagement() {
 
     const filteredUsers = users.filter(
         user =>
-            user.nama_panjang?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.no_telepon?.toLowerCase().includes(searchTerm.toLowerCase())
+            user.noTelepon?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -77,15 +71,13 @@ export default function UserManagement() {
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-full bg-blue-500"></div>
                                     <div>
-                                        <h3 className="font-medium">
-                                            {user.nama_panjang || "No Name"}
-                                        </h3>
+                                        <h3 className="font-medium">{user.nama || "No Name"}</h3>
                                         <p className="text-sm text-gray-500">{user.email}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm text-gray-500">
-                                        {user.no_telepon || "No Phone"}
+                                        {user.noTelepon || "No Phone"}
                                     </p>
                                     <Button variant="outline" size="sm">
                                         Details

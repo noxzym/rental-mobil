@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useQueryStore } from "@/hooks/use-queryStore";
+import { useQueryStore } from "@/hooks/floppy-disk/use-queryStore";
 import { Button } from "@/components/ui/button";
 
 export default function SearchButton() {

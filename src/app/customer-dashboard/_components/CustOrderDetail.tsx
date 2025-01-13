@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Prisma } from "@prisma/client";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,25 +21,16 @@ interface CustOrderDetailProps {
     onClose: () => void;
 }
 
-interface BookingDetail {
-    mobil: {
-        id: string;
-        merek: string;
-        model: string;
-        warna: string;
-        no_plat: string;
-        harga: number;
+type BookingDetail = Prisma.bookingGetPayload<{
+    include: {
+        mobil: true;
+        kabukota: {
+            include: {
+                provinsi: true;
+            };
+        };
     };
-    driver: string | null;
-    start_date: string;
-    end_date: string;
-    pickup_time: string;
-    kabukota: {
-        nama: string;
-    };
-    status: string;
-    canceled: boolean;
-}
+}>;
 
 const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
     const [bookingData, setBookingData] = useState<BookingDetail | null>(null);
@@ -117,8 +109,7 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
             if (bookingData) {
                 setBookingData({
                     ...bookingData,
-                    canceled: true,
-                    status: "canceled"
+                    status: "CANCELED"
                 });
             }
         } catch (error) {
@@ -156,6 +147,8 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
                 return status;
         }
     };
+
+    console.log(bookingData);
 
     return (
         <div className="h-full bg-white p-6">
@@ -195,7 +188,7 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
                     />
                     <Input
                         className="bg-gray-50"
-                        value={bookingData.mobil.no_plat}
+                        value={bookingData.mobil.plat}
                         placeholder="Nomor Plat"
                         disabled
                     />
@@ -205,19 +198,19 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
                 <Card className="space-y-4 p-4">
                     <Input
                         className="bg-gray-50"
-                        value={new Date(bookingData.start_date).toLocaleDateString()}
+                        value={new Date(bookingData.startDate).toLocaleDateString()}
                         placeholder="Tanggal Mulai"
                         disabled
                     />
                     <Input
                         className="bg-gray-50"
-                        value={new Date(bookingData.end_date).toLocaleDateString()}
+                        value={new Date(bookingData.endDate).toLocaleDateString()}
                         placeholder="Tanggal Selesai"
                         disabled
                     />
                     <Input
                         className="bg-gray-50"
-                        value={bookingData.pickup_time}
+                        value={bookingData.pickupTime.toString()}
                         placeholder="Jam Penjemputan"
                         disabled
                     />
@@ -258,11 +251,12 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
                     <Button
                         className="w-full"
                         variant={
-                            bookingData.status === "completed"
+                            bookingData.status === "FINISHED"
                                 ? "default"
-                                : bookingData.status === "inProgress"
+                                : bookingData.status === "ONGOING"
                                   ? "secondary"
-                                  : bookingData.status === "incoming"
+                                  : // @ts-ignore
+                                    bookingData.status === "ONGOING"
                                     ? "outline"
                                     : "destructive"
                         }
@@ -270,7 +264,7 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
                         {getStatusLabel(bookingData.status)}
                     </Button>
 
-                    {bookingData.status === "incoming" && !bookingData.canceled && (
+                    {bookingData.status === "ONGOING" && (
                         <Button
                             className="w-full"
                             variant="destructive"

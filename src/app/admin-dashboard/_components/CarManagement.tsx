@@ -2,12 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toast } from "@/components/ui/toast";
-
-// import { Toast } from "@radix-ui/react-toast";
 
 interface Car {
     id: string;
@@ -44,10 +42,10 @@ export default function CarManagement() {
             setCars(data);
         } catch (error) {
             console.error("Error fetching cars:", error);
-            Toast({
+            toast({
                 variant: "destructive",
-                title: "Error"
-                // description: "Failed to fetch cars. Please try again.",
+                title: "Error",
+                description: "Failed to fetch cars. Please try again."
             });
         }
     };
@@ -77,16 +75,16 @@ export default function CarManagement() {
             // Refetch cars to update the list
             await fetchCars();
 
-            Toast({
-                title: "Success"
-                // description: `Car status updated to ${newStatus ? 'Ready' : 'Maintenance'}`,
+            toast({
+                title: "Success",
+                description: `Car status updated to ${newStatus ? "Ready" : "Maintenance"}`
             });
         } catch (error) {
             console.error("Error updating car status:", error);
-            Toast({
+            toast({
                 variant: "destructive",
-                title: "Error"
-                // description: "Failed to update car status. Please try again.",
+                title: "Error",
+                description: "Failed to update car status. Please try again."
             });
         } finally {
             setLoading(false);
@@ -107,7 +105,7 @@ export default function CarManagement() {
     return (
         <div className="p-4">
             <Tabs defaultValue="ready" onValueChange={value => setActiveTab(value)}>
-                <TabsList className="mb-4 flex justify-around">
+                <TabsList className="grid grid-cols-3">
                     <TabsTrigger value="ready">Ready Car</TabsTrigger>
                     <TabsTrigger value="checking">Checking Car</TabsTrigger>
                     <TabsTrigger value="ordered">In Ordered Car</TabsTrigger>

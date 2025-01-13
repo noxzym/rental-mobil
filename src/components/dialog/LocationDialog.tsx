@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { usePathname } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 import { MdLocationOn } from "react-icons/md";
 import { cn } from "@/lib/utils";
+import { useQueryStore } from "@/hooks/floppy-disk/use-queryStore";
+import { isSearchCase, useWilayahQuery } from "@/hooks/floppy-disk/use-wilayahQuery";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
-import { useQueryStore } from "@/hooks/use-queryStore";
-import { useWilayahQuery } from "@/hooks/use-wilayahQuery";
 import { CustomInput } from "../CustomInput";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
@@ -28,17 +28,19 @@ interface prop {
 }
 
 export default function LocationDialog({ className }: prop) {
-    const pathname = usePathname();
-    const [open, setOpen] = useState(false);
-
     const isDesktop = useMediaQuery("(min-width: 768px)");
+    const [open, setOpen] = useState(false);
+    const [newState, setNewState] = useState<string | null>(null);
+
     const location = useQueryStore("location");
-    const inputDebouncedValue = useDebounce(location);
+    const inputDebounce = useDebounce(newState);
+    const query = open ? inputDebounce : location;
 
     const { data } = useWilayahQuery({
-        wilayahQuery: open && inputDebouncedValue ? inputDebouncedValue.toUpperCase() : location
+        query: query ?? undefined
     });
 
+    const pathname = usePathname();
     const isSearchPage = pathname === "/search";
     const title = "Pilih Kota Tujuan";
     const input = (
@@ -47,9 +49,13 @@ export default function LocationDialog({ className }: prop) {
             type="text"
             placeholder="Bali"
             className="text-lg text-foreground"
-            onChange={e => useQueryStore.set({ location: e.target.value })}
+            onChange={onChange}
         />
     );
+
+    function onChange(e: ChangeEvent<HTMLInputElement>) {
+        setNewState(e.target.value);
+    }
 
     function triggerButton() {
         return (
@@ -88,23 +94,25 @@ export default function LocationDialog({ className }: prop) {
                     </DialogHeader>
                     <Separator />
                     <div className="flex flex-col overflow-y-auto">
-                        {data?.map(({ id, nama, provinsi }) => (
+                        {data?.map((zone, index) => (
                             <Button
-                                key={id}
+                                key={index}
                                 variant="ghost"
                                 className="cursor-pointer justify-start gap-4 py-8 [&_svg]:size-8"
-                                onClick={() => handleSelect(id)}
+                                onClick={() => handleSelect(zone.id)}
                                 asChild
                             >
                                 <div>
                                     <MdLocationOn />
                                     <div className="flex flex-col">
                                         <div className="text-lg font-bold capitalize">
-                                            {nama.toLowerCase().replace("kab.", "kabupaten")}
+                                            {zone.nama.toLowerCase().replace("kab.", "kabupaten")}
                                         </div>
-                                        <div className="capitalize text-gray-500">
-                                            {provinsi.nama.toLowerCase()}, Indonesia
-                                        </div>
+                                        {isSearchCase(data) && (
+                                            <div className="capitalize text-gray-500">
+                                                {data[index].provinsi.nama.toLowerCase()}, Indonesia
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </Button>
@@ -128,23 +136,25 @@ export default function LocationDialog({ className }: prop) {
                 </DrawerHeader>
                 <Separator />
                 <div className="flex flex-col overflow-y-auto">
-                    {data?.map(({ id, nama, provinsi }) => (
+                    {data?.map((zone, index) => (
                         <Button
-                            key={id}
+                            key={index}
                             variant="ghost"
                             className="cursor-pointer justify-start gap-4 py-8 [&_svg]:size-8"
-                            onClick={() => handleSelect(id)}
+                            onClick={() => handleSelect(zone.id)}
                             asChild
                         >
                             <div>
                                 <MdLocationOn />
                                 <div className="flex flex-col">
                                     <div className="text-lg font-bold capitalize">
-                                        {nama.toLowerCase().replace("kab.", "kabupaten")}
+                                        {zone.nama.toLowerCase().replace("kab.", "kabupaten")}
                                     </div>
-                                    <div className="capitalize text-gray-500">
-                                        {provinsi.nama.toLowerCase()}, Indonesia
-                                    </div>
+                                    {isSearchCase(data) && (
+                                        <div className="capitalize text-gray-500">
+                                            {data[index].provinsi.nama.toLowerCase()}, Indonesia
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </Button>

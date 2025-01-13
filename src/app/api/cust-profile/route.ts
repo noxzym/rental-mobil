@@ -54,7 +54,7 @@ export async function PUT(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { email, nama_panjang, jl_no_rt_rw, no_telepon } = body;
+        const { email, nama, detailAlamat, noTelepon } = body;
 
         if (email !== session.user.email) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -63,9 +63,9 @@ export async function PUT(request: NextRequest) {
         const updatedUser = await prisma.account.update({
             where: { email },
             data: {
-                nama_panjang,
-                jl_no_rt_rw,
-                no_telepon
+                nama,
+                detailAlamat,
+                noTelepon
             },
             include: {
                 kelurahan: {

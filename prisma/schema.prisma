@@ -3,97 +3,118 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model kabukota {
-  id         String      @id @db.VarChar(4)
-  nama       String      @db.VarChar(50)
-  provinsiId String      @map("provinsi_id") @db.VarChar(2)
-  provinsi   provinsi    @relation(fields: [provinsiId], references: [id], onDelete: Cascade, map: "kabukota_id_provinsi_fkey")
-  kecamatan  kecamatan[]
-  bookings   booking[]  
+  id         String @id @db.VarChar(4)
+  nama       String @db.VarChar(50)
+  provinsiId String @map("provinsi_id") @db.VarChar(2)
+
+  provinsi  provinsi    @relation(fields: [provinsiId], references: [id], map: "kabukota_id_provinsi_fkey")
+  booking   booking[]
+  kecamatan kecamatan[]
 }
 
 model kecamatan {
-  id         String      @id @db.VarChar(6)
-  nama       String      @db.VarChar(50)
-  kabukotaId String      @map("kabukota_id") @db.VarChar(4)
-  kabukota   kabukota    @relation(fields: [kabukotaId], references: [id], onDelete: Cascade, map: "kecamatan_id_kabukota_fkey")
-  kelurahan  kelurahan[]
+  id         String @id @db.VarChar(6)
+  nama       String @db.VarChar(50)
+  kabukotaId String @map("kabukota_id") @db.VarChar(4)
+
+  kabukota  kabukota    @relation(fields: [kabukotaId], references: [id], map: "kecamatan_id_kabukota_fkey")
+  kelurahan kelurahan[]
 }
 
 model kelurahan {
-  id          String    @id @db.VarChar(10)
-  nama        String    @db.VarChar(50)
-  kecamatanId String    @map("kecamatan_id") @db.VarChar(6)
-  account     account[]
-  kecamatan   kecamatan @relation(fields: [kecamatanId], references: [id], onDelete: Cascade, map: "kelurahan_id_kecamatan_fkey")
+  id          String @id @db.VarChar(10)
+  nama        String @db.VarChar(50)
+  kecamatanId String @map("kecamatan_id") @db.VarChar(6)
+
+  account   account[]
+  kecamatan kecamatan @relation(fields: [kecamatanId], references: [id], map: "kelurahan_id_kecamatan_fkey")
 }
 
 model provinsi {
-  id       String     @id @db.VarChar(2)
-  nama     String     @db.VarChar(50)
+  id   String @id @db.VarChar(2)
+  nama String @db.VarChar(50)
+
   kabukota kabukota[]
 }
 
+enum Transmisi {
+  MANUAL
+  MATIC
+}
+
+enum StatusMobil {
+  READY
+  MAINTENANCE
+  BOOKED
+}
+
 model mobil {
-  id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  warna   String    @db.VarChar(10)
-  merek   String    @db.VarChar(10)
-  model   String    @db.VarChar(10)
-  tahun   String    @db.VarChar(5)
-  no_plat String    @db.VarChar(15)
-  image   String?    
-  bangku  Int
-  harga   Int
-  status  Boolean
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  warna     String      @db.VarChar(10)
+  merek     String      @db.VarChar(10)
+  model     String      @db.VarChar(10)
+  tahun     String      @db.VarChar(5)
+  plat      String      @db.VarChar(15)
+  transmisi Transmisi
+  gambar    String
+  bangku    Int
+  harga     Int
+  status    StatusMobil
+
   booking booking[]
 }
 
+enum StatusBooking {
+  ONGOING
+  FINISHED
+  CANCELED
+}
+
 model booking {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userEmail  String   @map("user_email") @db.VarChar(30)
-  mobilId    String   @map("mobil_id") @db.Uuid
-  start_date DateTime @db.Date
-  end_date   DateTime @db.Date
-  pickup_time DateTime    @db.Time(3) 
-  kabukota_tujuan String  @db.VarChar(4)
-  driver     String?  @db.VarChar(30)
-  canceled   Boolean
-  mobil      mobil    @relation(fields: [mobilId], references: [id], onDelete: Cascade)
-  user       account  @relation(fields: [userEmail], references: [email], onDelete: Cascade)
-  kabukota   kabukota?  @relation(fields: [kabukota_tujuan], references: [id], onDelete: Cascade)
-  review     review?
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId      String?       @map("account_id") @db.Uuid
+  mobilId        String?       @map("mobil_id") @db.Uuid
+  startDate      DateTime      @map("start_date") @db.Date
+  endDate        DateTime      @map("end_date") @db.Date
+  pickupTime     DateTime      @map("pickup_time") @db.Time
+  kabukotaTujuan String?       @map("kabukota_tujuan") @db.VarChar(10)
+  driver         String?       @db.VarChar(30)
+  status         StatusBooking
+  review         review?
+
+  account  account?  @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  kabukota kabukota? @relation(fields: [kabukotaTujuan], references: [id], onDelete: SetNull)
+  mobil    mobil?    @relation(fields: [mobilId], references: [id], onDelete: SetNull)
 }
 
 model account {
-  id                String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email            String     @unique @db.VarChar(30)
-  password         String?    
-  nama_panjang     String?    @db.VarChar(60)
-  alamat           String?    @db.VarChar(10)
-  jl_no_rt_rw      String?    @db.VarChar(100)
-  no_telepon       String?    @db.VarChar(16)
-  admin            Boolean?
-  image            String?    
-  emailVerified    DateTime?  
-  provider         String?    
-  providerAccountId String?   
-  kelurahan        kelurahan? @relation(fields: [alamat], references: [id], onDelete: Cascade)
-  booking          booking[]  // Changed from booking? to booking[]
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String    @unique @db.VarChar(30)
+  nama         String?   @db.VarChar(50)
+  jenisKelamin String?   @map("jenis_kelamin") @db.VarChar(6)
+  tanggalLahir DateTime? @map("tanggal_lahir") @db.Date
+  alamat       String?   @db.VarChar(10)
+  detailAlamat String?   @map("detail_alamat")
+  noTelepon    String?   @map("no_telepon") @db.VarChar(16)
+  isAdmin      Boolean?  @default(false) @map("is_admin")
+  password     String?
+  avatar       String?
 
-  @@unique([provider, providerAccountId])
+  booking   booking[]
+  kelurahan kelurahan? @relation(fields: [alamat], references: [id], onDelete: SetNull)
 }
 
 model review {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  bookingId  String   @unique @db.Uuid
-  rating     Int?
-  ulasan     String?
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  bookingId String  @unique @map("booking_id") @db.Uuid
+  rating    Int?
+  ulasan    String?
 
-  // Relation to the booking model
-  booking    booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
