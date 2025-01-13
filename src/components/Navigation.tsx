@@ -12,9 +12,7 @@ export default function Navigation() {
             </Link>
             <div className="flex items-center gap-5">
                 <Button variant="link" className="px-0 py-0" asChild>
-                    <Link href="#">
-                        <TbHeartHandshake /> Jadi Partner Kami
-                    </Link>
+                    <Link href="/dashboard">Buka Dashboard</Link>
                 </Button>
                 <AuthButton />
             </div>

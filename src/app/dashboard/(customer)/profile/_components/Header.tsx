@@ -27,9 +27,10 @@ interface props {
             };
         };
     }>;
+    onSave: (profileStore: profileStoreType) => void;
 }
 
-export default function Header({ user }: props) {
+export default function Header({ user, onSave }: props) {
     const profileStore = useProfileStore();
 
     useEffect(() => {
@@ -92,27 +93,9 @@ export default function Header({ user }: props) {
         });
     }
 
-    async function handleSave() {
-        "use server";
-
-        await prisma.account
-            .update({
-                where: {
-                    email: user.email!
-                },
-                data: {
-                    nama: profileStore!.nama,
-                    noTelepon: profileStore!.noTelepon,
-                    jenisKelamin: profileStore!.jenisKelamin,
-                    tanggalLahir: profileStore!.tanggalLahir,
-                    alamat: profileStore!.kelurahan,
-                    detailAlamat: profileStore!.detailAlamat
-                }
-            })
-            .catch(console.log);
-
+    function handleSave() {
+        onSave(profileStore);
         handleEdit();
-        revalidatePath("/dashboard/profile");
     }
 
     return (
