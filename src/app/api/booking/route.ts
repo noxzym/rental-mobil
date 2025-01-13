@@ -13,23 +13,7 @@ export async function GET(request: NextRequest) {
             const booking = await prisma.booking.findUnique({
                 where: { id },
                 include: {
-                    user: {
-                        include: {
-                            kelurahan: {
-                                include: {
-                                    kecamatan: {
-                                        include: {
-                                            kabukota: {
-                                                include: {
-                                                    provinsi: true
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    account: true,
                     mobil: true,
                     kabukota: true
                 }
@@ -42,38 +26,19 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({
                 id: booking.id,
                 user: {
-                    name: booking.user.nama_panjang,
-                    email: booking.user.email,
-                    phone: booking.user.no_telepon,
-                    address: booking.user.alamat,
-                    jl_no_rt_rw: booking.user.jl_no_rt_rw || null,
-                    kelurahan: booking.user.kelurahan?.nama,
-                    kecamatan: booking.user.kelurahan?.kecamatan?.nama,
-                    kabukota: booking.user.kelurahan?.kecamatan?.kabukota?.nama,
-                    provinsi: booking.user.kelurahan?.kecamatan?.kabukota?.provinsi?.nama
+                    ...booking.account
                 },
                 car: {
-                    id: booking.mobil.id,
-                    brand: booking.mobil.merek,
-                    model: booking.mobil.model,
-                    color: booking.mobil.warna,
-                    plate: booking.mobil.no_plat,
-                    harga: booking.mobil.harga
+                    ...booking.mobil
                 },
                 driver: booking.driver,
                 schedule: {
-                    startDate: booking.start_date.toISOString().split("T")[0],
-                    endDate: booking.end_date.toISOString().split("T")[0],
-                    pickupTime: booking.pickup_time.toISOString().split("T")[1].slice(0, 5)
+                    startDate: booking.startDate.toISOString().split("T")[0],
+                    endDate: booking.endDate.toISOString().split("T")[0],
+                    pickupTime: booking.pickupTime.toISOString().split("T")[1].slice(0, 5)
                 },
                 destination: booking.kabukota?.nama,
-                status: booking.canceled
-                    ? "Canceled"
-                    : booking.end_date < today
-                      ? "Selesai"
-                      : booking.start_date <= today && booking.end_date >= today
-                        ? "Sedang Berjalan"
-                        : "Akan Datang"
+                status: booking.status
             });
         }
 
@@ -83,41 +48,47 @@ export async function GET(request: NextRequest) {
         if (status === "completed") {
             bookings = await prisma.booking.findMany({
                 where: {
-                    end_date: { lt: today },
-                    canceled: false
+                    endDate: { lt: today },
+                    status: {
+                        not: "CANCELED"
+                    }
                 },
                 include: {
-                    user: true
+                    account: true
                 }
             });
         } else if (status === "inProgress") {
             bookings = await prisma.booking.findMany({
                 where: {
-                    start_date: { lte: today },
-                    end_date: { gte: today },
-                    canceled: false
+                    startDate: { lte: today },
+                    endDate: { gte: today },
+                    status: {
+                        not: "CANCELED"
+                    }
                 },
                 include: {
-                    user: true
+                    account: true
                 }
             });
         } else if (status === "incoming") {
             bookings = await prisma.booking.findMany({
                 where: {
-                    start_date: { gt: today },
-                    canceled: false
+                    startDate: { gt: today },
+                    status: {
+                        not: "CANCELED"
+                    }
                 },
                 include: {
-                    user: true
+                    account: true
                 }
             });
         } else if (status === "canceled") {
             bookings = await prisma.booking.findMany({
                 where: {
-                    canceled: true
+                    status: "CANCELED"
                 },
                 include: {
-                    user: true
+                    account: true
                 }
             });
         } else {
@@ -126,10 +97,10 @@ export async function GET(request: NextRequest) {
 
         const response = bookings.map(booking => ({
             id: booking.id,
-            userName: booking.user.nama_panjang,
-            userId: booking.user.id,
-            startDate: booking.start_date.toISOString().split("T")[0],
-            endDate: booking.end_date.toISOString().split("T")[0],
+            userName: booking.account?.nama,
+            userId: booking.account?.id,
+            startDate: booking.startDate.toISOString().split("T")[0],
+            endDate: booking.endDate.toISOString().split("T")[0],
             status:
                 status === "completed"
                     ? "Selesai"

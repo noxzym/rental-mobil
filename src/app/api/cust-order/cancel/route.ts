@@ -15,9 +15,11 @@ export async function POST(request: NextRequest) {
         const booking = await prisma.booking.findFirst({
             where: {
                 id: bookingId,
-                userEmail: session.user.email,
-                start_date: { gt: new Date() }, // Only allow canceling future bookings
-                canceled: false
+                account: { email: session.user.email },
+                startDate: { gt: new Date() }, // Only allow canceling future bookings
+                status: {
+                    not: "CANCELED"
+                }
             }
         });
 
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
         // Update the booking
         const updatedBooking = await prisma.booking.update({
             where: { id: bookingId },
-            data: { canceled: true }
+            data: { status: "CANCELED" }
         });
 
         return NextResponse.json(updatedBooking);

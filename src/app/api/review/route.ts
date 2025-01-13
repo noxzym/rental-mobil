@@ -13,11 +13,7 @@ export async function GET() {
             include: {
                 booking: {
                     include: {
-                        user: {
-                            select: {
-                                nama_panjang: true
-                            }
-                        }
+                        account: true
                     }
                 }
             }
@@ -26,7 +22,7 @@ export async function GET() {
         const formattedReviews = reviews.map(review => ({
             id: review.id,
             bookingId: review.bookingId,
-            userName: review.booking.user.nama_panjang || "Anonymous",
+            userName: review.booking.account?.nama || "Anonymous",
             text: review.ulasan || "",
             rating: review.rating || 0
         }));
