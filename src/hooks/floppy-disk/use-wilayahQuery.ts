@@ -16,18 +16,16 @@ type wilayahQueryReturnType =
     | Prisma.kabukotaGetPayload<{}>[]
     | Prisma.provinsiGetPayload<{}>[];
 
-const baseURI = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/wilayah`;
-
 export const useWilayahQuery = createQuery<wilayahQueryPropsType, wilayahQueryReturnType>(
     async ({ endpoint = "/", query, parent }) => {
-        const url = new URL(baseURI + endpoint);
+        const url = `/api/wilayah${endpoint}`;
 
         if (query?.length) {
-            url.searchParams.set("query", query);
+            url.concat(`?query=${query}`);
         }
 
         if (parent?.length) {
-            url.searchParams.set("parent", parent);
+            url.concat(`?parent=${parent}`);
         }
 
         const res = await fetch(url);
