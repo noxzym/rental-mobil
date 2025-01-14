@@ -14,7 +14,7 @@ export default function JumbotronSection() {
                     <BrandLogo textColor="#FFFFFF" dotColor="#FFB534" />
                 </Link>
                 <div className="hidden gap-4 md:flex">
-                    <Button variant="link" className="px-0 py-0" asChild>
+                    <Button variant="secondary" asChild>
                         <Link href="/dashboard">Buka Dashboard</Link>
                     </Button>
                     <AuthButton />
