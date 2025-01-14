@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { signOut } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { profileStoreType } from "@/hooks/floppy-disk/use-profileStore";

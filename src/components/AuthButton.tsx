@@ -30,7 +30,7 @@ export default function AuthButton() {
                     <FaUser /> Keluar
                 </>
             ) : (
-                <Link href="/sign-in">
+                <Link href="/auth">
                     <FaUser />
                     Daftar / Masuk
                 </Link>

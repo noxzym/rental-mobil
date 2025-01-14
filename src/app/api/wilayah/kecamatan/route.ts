@@ -6,8 +6,6 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get("query");
     const parent = searchParams.get("parent");
 
-    console.log(query, parent);
-
     if (!query) {
         const kecamatan = await prisma.kecamatan.findMany({
             take: 10,

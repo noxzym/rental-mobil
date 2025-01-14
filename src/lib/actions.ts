@@ -2,15 +2,16 @@
 
 import { hash } from "bcrypt";
 import prisma from "@/lib/prisma";
+import { formSchemaType } from "./schemas";
 
-interface createUserProp {
-    email: string;
-    password: string;
-}
-
-export async function createUser(data: createUserProp) {
-    const ifExists = await findUser(data);
+export async function createUser(data: formSchemaType) {
+    const ifExists = await findUserByUnique(data);
     if (ifExists) {
+        if (!ifExists.password) {
+            return {
+                error: "You already have an account with Google."
+            };
+        }
         return {
             error: "User with this email already exists."
         };
@@ -18,17 +19,14 @@ export async function createUser(data: createUserProp) {
 
     return prisma.account.create({
         data: {
+            nama: data.nama,
             email: data.email,
             password: await hash(data.password, 10)
         }
     });
 }
 
-interface findUserProp {
-    email: string;
-}
-
-export async function findUser(data: findUserProp) {
+export async function findUserByUnique(data: Omit<formSchemaType, "password" | "confirm">) {
     return prisma.account.findUnique({
         where: {
             email: data.email

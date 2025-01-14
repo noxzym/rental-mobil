@@ -7,6 +7,9 @@ import GoogleProvider from "next-auth/providers/google";
 import prisma from "./prisma";
 
 export const authConfig: NextAuthOptions = {
+    pages: {
+        signIn: "/auth"
+    },
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_ID!,
@@ -19,11 +22,8 @@ export const authConfig: NextAuthOptions = {
                 }
             }
         }),
-        FacebookProvider({
-            clientId: process.env.FACEBOOK_ID!,
-            clientSecret: process.env.FACEBOOK_SECRET!
-        }),
         CredentialsProvider({
+            id: "credentials",
             name: "Credentials",
             credentials: {
                 email: {},

@@ -1,15 +1,20 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState } from "react";
 import { MdLogin } from "react-icons/md";
-import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import ButtonProvider from "@/components/ButtonProvider";
-import EmailForm from "@/components/EmailForm";
+import AuthForm from "./_components/AuthForm";
+import GoogleProvider from "./_components/GoogleProvider";
 
-export default async function SignUpPage() {
-    const session = await auth();
+export default function AuthPage() {
+    const [state, setState] = useState<"login" | "register">("login");
 
-    if (session) redirect("/");
+    const question = state === "login" ? "Belum punya akun?" : "Sudah punya akun?";
+    const CTA = state === "login" ? "Daftar yuk!" : "Login aja!";
+
+    function onClick() {
+        setState(prev => (prev === "login" ? "register" : "login"));
+    }
 
     return (
         <section className="container mx-auto flex min-h-screen items-center justify-center">
@@ -18,23 +23,16 @@ export default async function SignUpPage() {
                     <MdLogin size={28} />
                 </span>
                 <p className="text-xl font-semibold">Selamat Datang</p>
-                <EmailForm />
-                <div className="flex w-full items-center">
-                    <hr className="flex-1 border-foreground/20" />
-                </div>
-                <div className="grid w-full grid-cols-3 gap-2">
-                    <ButtonProvider provider="Google" />
-                    <ButtonProvider provider="Facebook" />
-                    <ButtonProvider provider="Apple" />
-                </div>
+                <AuthForm action={state} />
+                <GoogleProvider />
                 <div className="flex items-center justify-center gap-1 pt-4">
-                    <p>Sudah punya akun?</p>
+                    <p>{question}</p>
                     <Button
                         variant="link"
                         className="h-fit px-0 py-0 font-bold text-[#1877F2]"
-                        asChild
+                        onClick={onClick}
                     >
-                        <Link href="/sign-in">Login aja!</Link>
+                        {CTA}
                     </Button>
                 </div>
             </div>

@@ -148,8 +148,6 @@ const CustOrderDetail = ({ orderId, onClose }: CustOrderDetailProps) => {
         }
     };
 
-    console.log(bookingData);
-
     return (
         <div className="h-full bg-white p-6">
             <div className="mb-6 flex items-center justify-between">
