@@ -14,10 +14,8 @@ export default function JumbotronSection() {
                     <BrandLogo textColor="#FFFFFF" dotColor="#FFB534" />
                 </Link>
                 <div className="hidden gap-4 md:flex">
-                    <Button variant="secondary" asChild>
-                        <Link href="#">
-                            <TbHeartHandshake /> Jadi Partner Kami
-                        </Link>
+                    <Button variant="link" className="px-0 py-0" asChild>
+                        <Link href="/dashboard">Buka Dashboard</Link>
                     </Button>
                     <AuthButton />
                 </div>
