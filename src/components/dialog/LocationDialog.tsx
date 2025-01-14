@@ -34,7 +34,7 @@ export default function LocationDialog({ className }: prop) {
 
     const location = useQueryStore("location");
     const inputDebounce = useDebounce(newState);
-    const query = open ? inputDebounce : location;
+    const query = open ? inputDebounce : (location ?? inputDebounce);
 
     const { data } = useWilayahQuery({
         query: query ?? undefined

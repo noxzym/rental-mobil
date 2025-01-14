@@ -18,14 +18,14 @@ type wilayahQueryReturnType =
 
 export const useWilayahQuery = createQuery<wilayahQueryPropsType, wilayahQueryReturnType>(
     async ({ endpoint = "/", query, parent }) => {
-        const url = `/api/wilayah${endpoint}`;
+        let url = `/api/wilayah${endpoint}`;
 
         if (query?.length) {
-            url.concat(`?query=${query}`);
+            url += `?query=${query}`;
         }
 
         if (parent?.length) {
-            url.concat(`?parent=${parent}`);
+            url += `&parent=${parent}`;
         }
 
         const res = await fetch(url);
