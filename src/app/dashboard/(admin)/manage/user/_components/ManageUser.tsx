@@ -148,8 +148,8 @@ export default function ManageUser({ account, onDelete }: props) {
 
     function triggerButton() {
         return (
-            <Card className="flex cursor-pointer items-center gap-4 p-3 transition-all hover:scale-105 hover:bg-background">
-                <Avatar className="size-14 !rounded-lg">
+            <Card className="flex cursor-pointer items-center gap-4 border-none p-3 transition-all duration-150 hover:bg-foreground/5 hover:shadow">
+                <Avatar className="size-14">
                     <AvatarImage
                         src={account.avatar ?? ""}
                         alt={account.nama?.split(" ")[0]}
@@ -160,9 +160,6 @@ export default function ManageUser({ account, onDelete }: props) {
                 <div className="flex flex-col gap-1 py-1">
                     <p className="font-medium">{account.nama}</p>
                     <p className="text-sm font-medium text-gray-500">{account.email}</p>
-                    <p className="text-sm font-medium text-gray-500">
-                        {account.noTelepon ? account.noTelepon : "Nomor Telepon Belum Diatur"}
-                    </p>
                     {/* <p className="col-span-4 text-lg font-semibold">
                         {mobil.merek} {mobil.model} ({mobil.tahun})
                     </p>
@@ -238,7 +235,7 @@ export default function ManageUser({ account, onDelete }: props) {
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetTrigger asChild>{triggerButton()}</SheetTrigger>
                 <SheetContent
-                    className="flex flex-col overflow-y-scroll rounded-l-xl py-10"
+                    className="flex flex-col gap-0 overflow-y-scroll rounded-l-xl py-10"
                     aria-describedby={undefined}
                 >
                     <SheetHeader className="flex-row items-end justify-between">
@@ -247,29 +244,28 @@ export default function ManageUser({ account, onDelete }: props) {
                             <SheetDescription>#{account.id}</SheetDescription>
                         </div>
                     </SheetHeader>
-                    <Separator />
-                    <Card className="flex h-full flex-col gap-4">
-                        <CardContent className="grid grid-cols-3 gap-5 pt-6">
-                            <div className="flex flex-col justify-between">
-                                <div className="flex flex-col gap-3">
-                                    <Avatar className="size-40 !rounded-lg">
-                                        <AvatarImage
-                                            src={account.avatar ?? ""}
-                                            alt={account.nama?.split(" ")[0]}
-                                            className="bg-black object-contain"
-                                        />
-                                        <AvatarFallback />
-                                    </Avatar>
-                                    {/* {carStore.isEditing && (
+                    <Separator className="mt-4" />
+                    <Card className="grid grid-cols-3 gap-5 border-none p-4 shadow-none">
+                        <div className="flex flex-col justify-between">
+                            <div className="flex flex-col gap-3">
+                                <Avatar className="size-40 !rounded-lg">
+                                    <AvatarImage
+                                        src={account.avatar ?? ""}
+                                        alt={account.nama?.split(" ")[0]}
+                                        className="bg-black object-contain"
+                                    />
+                                    <AvatarFallback />
+                                </Avatar>
+                                {/* {carStore.isEditing && (
                                         <Button variant="outline" className="font-semibold">
                                             Pilih Foto
                                         </Button>
                                     )} */}
-                                </div>
-                                <ActionButton />
                             </div>
-                            <div className="col-span-2 flex flex-col gap-3">
-                                {/* {CarData.map((data, index) => (
+                            <ActionButton />
+                        </div>
+                        <div className="col-span-2 flex flex-col gap-3">
+                            {/* {CarData.map((data, index) => (
                                     <div key={index} className="grid grid-cols-5 items-center">
                                         <p className="text-sm">{data.name}</p>
                                         <Input
@@ -282,8 +278,7 @@ export default function ManageUser({ account, onDelete }: props) {
                                         />
                                     </div>
                                 ))} */}
-                            </div>
-                        </CardContent>
+                        </div>
                     </Card>
                 </SheetContent>
             </Sheet>

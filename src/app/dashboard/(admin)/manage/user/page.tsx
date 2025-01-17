@@ -1,8 +1,11 @@
 import prisma from "@/lib/prisma";
 import ManageUser from "./_components/ManageUser";
 
-export default async function ManageOrderPage() {
+export default async function ManageUserPage() {
     const accounts = await prisma.account.findMany({
+        where: {
+            isAdmin: false
+        },
         include: {
             booking: true,
             kelurahan: {

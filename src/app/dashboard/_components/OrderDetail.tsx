@@ -113,7 +113,7 @@ export default function OrderDetail({ tab, booking, onCancel }: props) {
 
     function triggerButton() {
         return (
-            <Card className="grid cursor-pointer grid-cols-5 items-center gap-4 p-3 transition-all hover:scale-105 hover:bg-background">
+            <Card className="grid cursor-pointer grid-cols-5 items-center gap-4 border-none p-3 transition-all duration-150 hover:bg-foreground/5 hover:shadow">
                 <Avatar className="aspect-video h-auto w-full !rounded-lg">
                     <AvatarImage
                         src={booking.mobil?.gambar}

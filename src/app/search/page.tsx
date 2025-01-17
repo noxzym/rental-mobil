@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import SearchSection from "@/components/SearchSection";
 import Aside from "./_components/Aside";
-import ListCar from "./_components/ListCar";
+import List from "./_components/List";
 
 export default function SearchPage() {
     return (
@@ -13,7 +13,7 @@ export default function SearchPage() {
                 <div className="z-0 grid w-full grid-cols-4 justify-between gap-5">
                     <Suspense>
                         <Aside />
-                        <ListCar />
+                        <List />
                     </Suspense>
                 </div>
             </div>

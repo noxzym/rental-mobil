@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, ComponentProps, useEffect, useState } from "react";
+import { ComponentProps, useEffect, useState } from "react";
 import { Prisma, Transmisi } from "@prisma/client";
 import { Edit2, Save, Trash, X } from "lucide-react";
 import { PiPalette } from "react-icons/pi";
@@ -8,7 +8,6 @@ import { PiSeatbelt } from "react-icons/pi";
 import { RiSteeringLine } from "react-icons/ri";
 import { RxCardStackMinus } from "react-icons/rx";
 import { formatCurrency } from "@/lib/utils";
-import { CarStoreType, useCarStore } from "@/hooks/floppy-disk/use-carStore";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -35,156 +34,63 @@ import {
 } from "@/components/ui/sheet";
 
 type props = {
-    mobil: Prisma.mobilGetPayload<{
-        include: {
-            booking: {
-                where: {
-                    status: "ONGOING";
-                };
-            };
-        };
-    }>;
-    onSave?: (carStore: CarStoreType) => void;
-    onDelete?: (id: string) => void;
+    mobil: Prisma.mobilGetPayload<{}>;
 };
 
-export default function ManageCar({ mobil, onSave, onDelete }: props) {
-    const carStore = useCarStore({ id: mobil.id });
+export default function Car({ mobil }: props) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
 
     const title = `Informasi Kendaraan`;
     const hargaSewa = formatCurrency(mobil.harga);
 
-    useEffect(() => {
-        const key: (keyof CarStoreType)[] = [
-            "id",
-            "warna",
-            "merek",
-            "model",
-            "tahun",
-            "plat",
-            "gambar",
-            "bangku",
-            "harga"
-        ];
-
-        const allFieldsNullOrUndefined = key.every(k => !carStore[k]);
-
-        if (allFieldsNullOrUndefined) {
-            useCarStore.set(
-                { id: mobil.id },
-                {
-                    ...mobil
-                }
-            );
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const CarData: ComponentProps<"input">[] = [
         {
             name: "Merek",
-            value: carStore.merek,
+            value: mobil.merek,
             type: "text"
         },
         {
             name: "Model",
-            value: carStore.model,
+            value: mobil.model,
             type: "text"
         },
         {
             name: "Warna",
-            value: carStore.warna,
+            value: mobil.warna,
             type: "text"
         },
         {
             name: "Tahun",
-            value: carStore.tahun,
+            value: mobil.tahun,
             type: "text"
         },
         {
             name: "Transmisi",
-            value: carStore.transmisi,
+            value: mobil.transmisi,
             type: "text"
         },
         {
             name: "Nomor Plat",
-            value: carStore.plat,
+            value: mobil.plat,
             type: "text"
         },
         {
             name: "Status",
-            value: carStore.status,
+            value: mobil.status,
             type: "text"
         },
         {
             name: "Jumlah Kursi",
-            value: carStore.bangku,
+            value: mobil.bangku,
             type: "number"
         },
         {
             name: "Harga Sewa",
-            value: carStore.harga,
+            value: mobil.harga,
             type: "text"
         }
     ];
-
-    function handleEditButton() {
-        useCarStore.set({ id: mobil.id }, { isEditing: !carStore.isEditing });
-    }
-
-    function handleCancelButton() {
-        useCarStore.set(
-            { id: mobil.id },
-            {
-                ...mobil
-            }
-        );
-        handleEditButton();
-    }
-
-    function handleSaveButton() {
-        handleEditButton();
-        onSave && onSave(carStore);
-    }
-
-    function handleDeleteButton() {
-        setOpen(false);
-        onDelete && onDelete(mobil.id);
-    }
-
-    function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
-        switch (name) {
-            case "Merek":
-                useCarStore.set({ id: mobil.id }, { merek: value });
-                break;
-            case "Model":
-                useCarStore.set({ id: mobil.id }, { model: value });
-                break;
-            case "Warna":
-                useCarStore.set({ id: mobil.id }, { warna: value });
-                break;
-            case "Tahun":
-                useCarStore.set({ id: mobil.id }, { tahun: value });
-                break;
-            case "Transmisi":
-                useCarStore.set({ id: mobil.id }, { transmisi: value.toUpperCase() as Transmisi });
-                break;
-            case "Nomor Plat":
-                useCarStore.set({ id: mobil.id }, { plat: value });
-                break;
-
-            case "Jumlah Kursi":
-                useCarStore.set({ id: mobil.id }, { bangku: parseInt(value) });
-                break;
-
-            case "Harga Sewa":
-                useCarStore.set({ id: mobil.id }, { harga: parseInt(value) });
-                break;
-        }
-    }
 
     function triggerButton() {
         return (
@@ -224,53 +130,53 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                 </div>
                 <div className="col-span-2 flex flex-col items-center gap-2 border-l-1">
                     <p className="font-bold">Harga Sewa</p>
-                    <p className="text-lg font-bold">{hargaSewa}</p>
+                    <p className="text-lg font-bold">{hargaSewa} / Hari</p>
                 </div>
             </Card>
         );
     }
 
-    function ActionButton() {
-        return (
-            <div className="grid grid-cols-2 gap-2">
-                {!carStore.isEditing ? (
-                    <>
-                        <Button variant="outline" className="gap-2" onClick={handleEditButton}>
-                            <Edit2 className="h-4 w-4" />
-                            Edit
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            className="gap-2"
-                            onClick={handleDeleteButton}
-                        >
-                            <Trash className="h-4 w-4" />
-                            Delete
-                        </Button>
-                    </>
-                ) : (
-                    <>
-                        <Button
-                            onClick={handleCancelButton}
-                            variant="outline"
-                            className={`gap-2 ${!carStore.isEditing ? "hidden" : ""}`}
-                        >
-                            <X className="h-4 w-4" />
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={handleSaveButton}
-                            variant="default"
-                            className={`gap-2 ${!carStore.isEditing ? "hidden" : ""}`}
-                        >
-                            <Save className="h-4 w-4" />
-                            Save
-                        </Button>
-                    </>
-                )}
-            </div>
-        );
-    }
+    // function ActionButton() {
+    //     return (
+    //         <div className="grid grid-cols-2 gap-2">
+    //             {!carStore.isEditing ? (
+    //                 <>
+    //                     <Button variant="outline" className="gap-2" onClick={handleEditButton}>
+    //                         <Edit2 className="h-4 w-4" />
+    //                         Edit
+    //                     </Button>
+    //                     <Button
+    //                         variant="destructive"
+    //                         className="gap-2"
+    //                         onClick={handleDeleteButton}
+    //                     >
+    //                         <Trash className="h-4 w-4" />
+    //                         Delete
+    //                     </Button>
+    //                 </>
+    //             ) : (
+    //                 <>
+    //                     <Button
+    //                         onClick={handleCancelButton}
+    //                         variant="outline"
+    //                         className={`gap-2 ${!carStore.isEditing ? "hidden" : ""}`}
+    //                     >
+    //                         <X className="h-4 w-4" />
+    //                         Cancel
+    //                     </Button>
+    //                     <Button
+    //                         onClick={handleSaveButton}
+    //                         variant="default"
+    //                         className={`gap-2 ${!carStore.isEditing ? "hidden" : ""}`}
+    //                     >
+    //                         <Save className="h-4 w-4" />
+    //                         Save
+    //                     </Button>
+    //                 </>
+    //             )}
+    //         </div>
+    //     );
+    // }
 
     if (isDesktop) {
         return (
@@ -298,13 +204,13 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                                     />
                                     <AvatarFallback useDynamicLoader={true} />
                                 </Avatar>
-                                {carStore.isEditing && (
+                                {/* {carStore.isEditing && (
                                     <Button variant="outline" className="font-semibold">
                                         Pilih Foto
                                     </Button>
-                                )}
+                                )} */}
                             </div>
-                            <ActionButton />
+                            {/* <ActionButton /> */}
                         </div>
                         <div className="col-span-2 flex flex-col gap-3">
                             {CarData.map((data, index) => (
@@ -314,8 +220,7 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                                         name={data.name}
                                         type={data.type}
                                         value={data.value}
-                                        onChange={handleOnChange}
-                                        disabled={!carStore.isEditing}
+                                        disabled={true}
                                         className="col-span-4 !cursor-default bg-gray-50"
                                     />
                                 </div>
@@ -353,8 +258,7 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                                     name={data.name}
                                     type={data.type}
                                     value={data.value}
-                                    onChange={handleOnChange}
-                                    disabled={!carStore.isEditing}
+                                    disabled={true}
                                     className="col-span-3 !cursor-default bg-gray-50"
                                 />
                             </div>
@@ -362,15 +266,14 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                     </div>
                 </div>
                 <DrawerFooter>
-                    <ActionButton />
-
-                    {!carStore.isEditing ? (
-                        <DrawerClose asChild>
-                            <Button>Close</Button>
-                        </DrawerClose>
-                    ) : (
-                        <Button variant="outline">Ubah Foto</Button>
-                    )}
+                    {/* <ActionButton /> */}
+                    {/* {!carStore.isEditing ? ( */}
+                    <DrawerClose asChild>
+                        <Button>Close</Button>
+                    </DrawerClose>
+                    {/* ) : ( */}
+                    {/* <Button variant="outline">Ubah Foto</Button> */}
+                    {/* )} */}
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
