@@ -12,8 +12,8 @@ export default function SearchPage() {
                 </Suspense>
                 <div className="z-0 grid w-full grid-cols-4 justify-between gap-5">
                     <Suspense>
-                        <Aside />
                         <List />
+                        <Aside />
                     </Suspense>
                 </div>
             </div>

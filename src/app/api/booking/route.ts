@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { number } from "zod";
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -115,5 +116,64 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error("Error fetching bookings:", error);
         return NextResponse.json({ error: "Failed to fetch bookings" }, { status: 500 });
+    }
+}
+
+export async function POST(request: NextRequest) {
+    const searchParams = await request.json();
+    
+    try {
+        // First, verify that the car exists and is available
+        const car = await prisma.mobil.findFirst({
+            where: {
+                id: searchParams["mobil_id"],
+                status: "READY"  // Only allow booking READY cars
+            }
+        });
+
+        if (!car) {
+            return NextResponse.json(
+                { error: "Car not available or doesn't exist" }, 
+                { status: 400 }
+            );
+        }
+
+        // Create the booking and update car status in a transaction
+        const booking = await prisma.$transaction(async (tx) => {
+            // Update car status to BOOKED
+            await tx.mobil.update({
+                where: { id: searchParams["mobil_id"] },
+                data: { status: "BOOKED" }
+            });
+
+            // Create the booking
+            return await tx.booking.create({
+                data: {
+                    account: {
+                        connect: { email: searchParams["email"] }
+                    },
+                    kabukota: {
+                        connect: { id: searchParams["kabukota_tujuan"] }
+                    },
+                    pickupTime: new Date(searchParams["pickup_time"]),
+                    driver: searchParams["driver"],
+                    startDate: new Date(Number(searchParams["start_date"])),
+                    endDate: new Date(Number(searchParams["end_date"])),
+                    mobil: {
+                        connect: { id: searchParams["mobil_id"] }
+                    },
+                    status: "ONGOING"
+                }
+            });
+        });
+
+        return NextResponse.json(booking);
+        
+    } catch (error) {
+        console.error("Error creating booking:", error);
+        return NextResponse.json(
+            { error: "Failed to create booking" }, 
+            { status: 500 }
+        );
     }
 }
