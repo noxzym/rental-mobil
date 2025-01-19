@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangeEvent, ComponentProps } from "react";
+import { ChangeEvent, ComponentProps, MouseEvent } from "react";
 import { Prisma } from "@prisma/client";
-import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/hooks/floppy-disk/use-profileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ interface props {
 
 export default function Biodata({ user }: props) {
     const profileStore = useProfileStore();
+    console.log(profileStore);
 
     const nama = profileStore.isEditing ? profileStore.nama : (user.nama ?? "Belum Diatur");
     const email = user.email;
@@ -70,10 +71,15 @@ export default function Biodata({ user }: props) {
         {
             name: "Tanggal Lahir",
             placeholder: "account@rent.id",
-            value: tanggalLahir ? format(tanggalLahir, "dd MMMM yyyy") : undefined,
+            // @ts-expect-error
+            value: tanggalLahir ?? undefined,
             type: "date"
         }
     ];
+
+    function handleSelect(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
+        useProfileStore.set({ jenisKelamin: e.currentTarget.id === "pria" ? "Pria" : "Wanita" });
+    }
 
     function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
@@ -92,13 +98,6 @@ export default function Biodata({ user }: props) {
                 useProfileStore.set({
                     ...profileStore,
                     noTelepon: e.target.value
-                });
-                break;
-
-            case "Jenis Kelamin":
-                useProfileStore.set({
-                    ...profileStore,
-                    jenisKelamin: e.target.value
                 });
                 break;
 
@@ -133,15 +132,48 @@ export default function Biodata({ user }: props) {
                     {biodata.map((data, index) => (
                         <div key={index} className="grid grid-cols-4 items-center">
                             <p className="text-sm">{data.name}</p>
-                            <Input
-                                name={data.name}
-                                type={data.type}
-                                placeholder={data.placeholder}
-                                value={data.value}
-                                onChange={e => handleOnChange(e)}
-                                disabled={!profileStore.isEditing || data.name === "Email"}
-                                className="col-span-3 bg-gray-50"
-                            />
+                            {data.name === "Jenis Kelamin" ? (
+                                <section className="col-span-3 grid grid-cols-3 gap-3">
+                                    <Button
+                                        id="pria"
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={handleSelect}
+                                        disabled={!profileStore.isEditing}
+                                        className={cn(
+                                            "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                            jenisKelamin === "Pria" &&
+                                                "bg-[#1877F2] text-background"
+                                        )}
+                                    >
+                                        Pria
+                                    </Button>
+                                    <Button
+                                        id="wanita"
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={handleSelect}
+                                        disabled={!profileStore.isEditing}
+                                        className={cn(
+                                            "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                            jenisKelamin === "Wanita" &&
+                                                "bg-[#1877F2] text-background"
+                                        )}
+                                    >
+                                        Wanita
+                                    </Button>
+                                </section>
+                            ) : (
+                                <Input
+                                    name={data.name}
+                                    type={data.type}
+                                    placeholder={data.placeholder}
+                                    value={data.value}
+                                    onChange={e => handleOnChange(e)}
+                                    disabled={!profileStore.isEditing || data.name === "Email"}
+                                    className="col-span-3 bg-gray-50"
+                                />
+                            )}
                         </div>
                     ))}
                 </div>
