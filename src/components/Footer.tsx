@@ -18,15 +18,15 @@ export default function Footer() {
                         <div className="grid gap-2">
                             <Link href="/home">Home</Link>
                             <Link href="/search">Search</Link>
-                            <Link href="#">About</Link>
+                            <Link href="/dashboard">Dashboard</Link>
                         </div>
                     </div>
                     <div className="flex flex-col justify-center gap-3 md:gap-6">
                         <p className="text-xl font-bold">Legal</p>
                         <div className="grid gap-2">
-                            <Link href="#">Privacy Policy</Link>
-                            <Link href="#">Terms of Service</Link>
-                            <Link href="#">Refund Policy</Link>
+                            <Link href="/privacy-policy">Privacy Policy</Link>
+                            <Link href="/terms-of-service">Terms of Service</Link>
+                            <Link href="/refund-policy">Refund Policy</Link>
                         </div>
                     </div>
                     <div className="flex flex-col justify-center gap-3 md:gap-6">

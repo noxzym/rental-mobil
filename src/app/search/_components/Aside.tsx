@@ -177,56 +177,53 @@ export default function Aside() {
         router.push("/dashboard/orders");
     }
 
-    if (!carStore.id.length) {
-        return (
-            <div className="h-fit rounded-xl bg-white p-6 shadow-md">
-                <h2 className="text-center text-xl font-bold">Detail Pesanan</h2>
-                <p className="mt-4 text-center text-gray-500">
-                    Silakan pilih mobil dan isi detail pemesanan
-                </p>
-            </div>
-        );
-    }
-
     return (
         <aside className="flex h-fit flex-col gap-5 rounded-xl bg-white px-4 py-5 shadow-md">
             <div className="space-y-3">
                 <p className="text-lg font-bold">Detail Pesanan</p>
                 <Separator />
             </div>
-            <div className="flex flex-col gap-3">
-                {CarData.map((data, index) => (
-                    <div key={index} className="space-y-1">
-                        <p className="font-medium">{data.title}</p>
-                        <div className="flex rounded border bg-gray-50 px-3 py-1 text-sm">
-                            <p>{data.value}</p>
-                        </div>
+            {!carStore.id.length ? (
+                <p className="text-sm text-gray-500">
+                    Silakan pilih mobil terlebih dahulu untuk melihat detail pesanan.
+                </p>
+            ) : (
+                <>
+                    <div className="flex flex-col gap-3">
+                        {CarData.map((data, index) => (
+                            <div key={index} className="space-y-1">
+                                <p className="font-medium">{data.title}</p>
+                                <div className="flex rounded border bg-gray-50 px-3 py-1 text-sm">
+                                    <p>{data.value}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-            <Separator />
-            <div className="flex flex-col gap-3">
-                {BookingData.map((data, index) => (
-                    <div key={index} className="space-y-1">
-                        <p className="font-medium">{data.title}</p>
-                        <div className="flex rounded border bg-gray-50 px-3 py-1 text-sm capitalize">
-                            <p>{data.value}</p>
-                        </div>
+                    <Separator />
+                    <div className="flex flex-col gap-3">
+                        {BookingData.map((data, index) => (
+                            <div key={index} className="space-y-1">
+                                <p className="font-medium">{data.title}</p>
+                                <div className="flex rounded border bg-gray-50 px-3 py-1 text-sm capitalize">
+                                    <p>{data.value}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-            <Separator />
-            <div className="flex justify-between text-lg font-semibold">
-                <span>Total</span>
-                <span>{getBookingPrices(carStore.harga, Number(queryStore.duration))}</span>
-            </div>
-            <Button
-                className="w-full bg-blue-500 text-white hover:bg-blue-600"
-                onClick={handleBook}
-                disabled={loading}
-            >
-                {loading ? "Processing..." : "Book Now"}
-            </Button>
+                    <Separator />
+                    <div className="flex justify-between text-lg font-semibold">
+                        <span>Total</span>
+                        <span>{getBookingPrices(carStore.harga, Number(queryStore.duration))}</span>
+                    </div>
+                    <Button
+                        className="w-full bg-blue-500 text-white hover:bg-blue-600"
+                        onClick={handleBook}
+                        disabled={loading}
+                    >
+                        {loading ? "Processing..." : "Book Now"}
+                    </Button>
+                </>
+            )}
         </aside>
     );
 }
