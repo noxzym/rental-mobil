@@ -2,6 +2,8 @@
 
 import { ChangeEvent, ComponentProps, MouseEvent } from "react";
 import { Prisma } from "@prisma/client";
+import { signOut } from "next-auth/react";
+import { deleteAccount } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/hooks/floppy-disk/use-profileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,16 +33,11 @@ interface props {
 
 export default function Biodata({ user }: props) {
     const profileStore = useProfileStore();
-    console.log(profileStore);
 
-    const nama = profileStore.isEditing ? profileStore.nama : (user.nama ?? "Belum Diatur");
+    const nama = profileStore.isEditing ? profileStore.nama : user.nama;
     const email = user.email;
-    const noTelepon = profileStore.isEditing
-        ? profileStore.noTelepon
-        : (user.noTelepon ?? "Belum Diatur");
-    const jenisKelamin = profileStore.isEditing
-        ? profileStore.jenisKelamin
-        : (user.jenisKelamin ?? "Belum Diatur");
+    const noTelepon = profileStore.isEditing ? profileStore.noTelepon : user.noTelepon;
+    const jenisKelamin = profileStore.isEditing ? profileStore.jenisKelamin : user.jenisKelamin;
     const tanggalLahir = profileStore.isEditing ? profileStore.tanggalLahir : user.tanggalLahir;
 
     const biodata: ComponentProps<"input">[] = [
@@ -110,6 +107,13 @@ export default function Biodata({ user }: props) {
         }
     }
 
+    async function handleOnDelete() {
+        await deleteAccount({ where: { email } });
+        await signOut({
+            callbackUrl: "/"
+        });
+    }
+
     return (
         <Card className="rounded-xl p-5">
             <div className="flex gap-5">
@@ -124,8 +128,12 @@ export default function Biodata({ user }: props) {
                             {user?.nama?.slice(0, 2)}
                         </AvatarFallback>
                     </Avatar>
-                    <Button variant="outline" className="font-semibold">
-                        Pilih Foto
+                    <Button
+                        variant="destructive"
+                        className="font-semibold"
+                        onClick={handleOnDelete}
+                    >
+                        Hapus Akun
                     </Button>
                 </div>
                 <div className="flex w-full flex-col gap-3 pt-5">

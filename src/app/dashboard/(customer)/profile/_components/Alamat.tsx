@@ -30,9 +30,7 @@ interface props {
 export default function Alamat({ user }: props) {
     const profileStore = useProfileStore();
 
-    const alamatLengkap = profileStore.isEditing
-        ? profileStore.detailAlamat
-        : (user.detailAlamat ?? "Belum Diatur");
+    const alamatLengkap = profileStore.isEditing ? profileStore.detailAlamat : user.detailAlamat;
 
     const alamat: (ComponentProps<"input"> & {
         bagian: "provinsi" | "kabukota" | "kecamatan" | "kelurahan";
