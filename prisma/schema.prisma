@@ -44,14 +44,20 @@ model provinsi {
 }
 
 enum Transmisi {
-  MANUAL
-  MATIC
+  Manual @map("MANUAL")
+  Matic  @map("MATIC")
 }
 
 enum StatusMobil {
-  READY
-  MAINTENANCE
-  BOOKED
+  Ready       @map("READY")
+  Maintenance @map("MAINTENANCE")
+  Booked      @map("BOOKED")
+}
+
+enum StatusBooking {
+  OnGoing  @map("ONGOING")
+  Finished @map("FINISHED")
+  Canceled @map("CANCELED")
 }
 
 model mobil {
@@ -70,19 +76,13 @@ model mobil {
   booking booking[]
 }
 
-enum StatusBooking {
-  ONGOING
-  FINISHED
-  CANCELED
-}
-
 model booking {
   id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   accountId      String?       @map("account_id") @db.Uuid
   mobilId        String?       @map("mobil_id") @db.Uuid
-  startDate      DateTime      @map("start_date") @db.Date
-  endDate        DateTime      @map("end_date") @db.Date
-  pickupTime     DateTime      @map("pickup_time") @db.Time
+  startDate      DateTime      @map("start_date") @db.Timestamp(0)
+  endDate        DateTime      @map("end_date") @db.Timestamp(0)
+  pickupTime     String        @map("pickup_time") @db.VarChar(5)
   kabukotaTujuan String?       @map("kabukota_tujuan") @db.VarChar(10)
   driver         String?       @db.VarChar(30)
   status         StatusBooking
