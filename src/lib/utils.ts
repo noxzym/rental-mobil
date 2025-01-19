@@ -7,9 +7,13 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function getBookingDates(timestamp: string, duration: number) {
+export function getBookingDates(timestamp: number, duration: number) {
     const startDate = new Date(timestamp);
-    const endDate = new Date(startDate.setDate(startDate.getDate() + duration));
+    startDate.setHours(0, 0, 1);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + duration - 1);
+    endDate.setHours(23, 59, 59);
 
     return {
         startDate,
@@ -37,7 +41,7 @@ export function formatCurrency(amount: number) {
 }
 
 export function formatDate(date: Date) {
-    return format(date, "dd MMMM yyyy", {
+    return format(date, "dd MMMM yyyy kk:mm:ss", {
         locale: id
     });
 }
