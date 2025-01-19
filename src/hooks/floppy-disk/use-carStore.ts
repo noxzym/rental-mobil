@@ -14,10 +14,10 @@ export const useCarStore = createStores<CarStoreKey, CarStoreType>({
     model: "",
     tahun: "",
     plat: "",
-    transmisi: Transmisi.MANUAL,
+    transmisi: Transmisi.Manual,
     gambar: "",
     bangku: 0,
     harga: 0,
-    status: StatusMobil.READY,
+    status: StatusMobil.Ready,
     isEditing: false
 });
