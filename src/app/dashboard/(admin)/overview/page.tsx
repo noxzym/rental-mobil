@@ -14,7 +14,7 @@ export default async function OverviewPage() {
     });
 
     const ongoingData = booking.filter(
-        order => order.endDate > new Date() && order.status === StatusBooking.ONGOING
+        order => order.endDate > new Date() && order.status === StatusBooking.OnGoing
     );
 
     async function handleCancelBooking(id: string) {
@@ -25,10 +25,10 @@ export default async function OverviewPage() {
                 id
             },
             data: {
-                status: StatusBooking.CANCELED,
+                status: StatusBooking.Canceled,
                 mobil: {
                     update: {
-                        status: StatusMobil.READY
+                        status: StatusMobil.Ready
                     }
                 }
             }
