@@ -1,11 +1,11 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import { hash } from "bcrypt";
 import prisma from "@/lib/prisma";
-import { formSchemaType } from "./schemas";
 
-export async function createUser(data: formSchemaType) {
-    const ifExists = await findUserByUnique(data);
+export async function createAccount(data: Prisma.accountCreateArgs) {
+    const ifExists = await findAccountByUnique({ where: { email: data.data.email } });
     if (ifExists) {
         if (!ifExists.password) {
             return {
@@ -17,19 +17,25 @@ export async function createUser(data: formSchemaType) {
         };
     }
 
-    return prisma.account.create({
+    data = {
+        ...data,
         data: {
-            nama: data.nama,
-            email: data.email,
-            password: await hash(data.password, 10)
+            ...data.data,
+            password: await hash(data.data.password!, 10)
         }
-    });
+    };
+
+    return prisma.account.create(data);
 }
 
-export async function findUserByUnique(data: Omit<formSchemaType, "password" | "confirm">) {
-    return prisma.account.findUnique({
-        where: {
-            email: data.email
-        }
-    });
+export async function findAccountByUnique(data: Prisma.accountFindUniqueArgs) {
+    return prisma.account.findUnique(data);
+}
+
+export async function createBooking(createData: Prisma.bookingCreateArgs) {
+    return prisma.booking.create(createData);
+}
+
+export async function updateMobil(createData: Prisma.mobilUpdateArgs) {
+    return prisma.mobil.update(createData);
 }
