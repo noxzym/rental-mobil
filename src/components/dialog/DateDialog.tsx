@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import { format } from "date-fns";
 import { IoCalendar } from "react-icons/io5";
 import { cn } from "@/lib/utils";
@@ -21,17 +20,17 @@ import {
 } from "../ui/drawer";
 
 interface prop {
+    isSearchPage?: boolean;
+    displayIcon?: boolean;
     className?: string;
 }
 
-export default function DateDialog({ className }: prop) {
-    const pathname = usePathname();
+export default function DateDialog({ isSearchPage, displayIcon, className }: prop) {
     const [open, setOpen] = useState(false);
 
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const dateStored = useQueryStore("date");
 
-    const isSearchPage = pathname === "/search";
     const title = "Pilih Tanggal Penjemputan";
     const content = (numberOfMount = 1) => (
         <Calendar
@@ -59,7 +58,7 @@ export default function DateDialog({ className }: prop) {
                 variant={isSearchPage ? "ghost" : "outline"}
                 className={cn("justify-start font-semibold", className)}
             >
-                {!isSearchPage && <IoCalendar />}
+                {displayIcon && <IoCalendar />}
                 {format(
                     new Date(dateStored.length ? Number(dateStored) : Date.now()),
                     "dd MMM yyyy"

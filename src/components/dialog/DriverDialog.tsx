@@ -1,19 +1,10 @@
-"use client";
-
-import { useState } from "react";
-import { IoTime } from "react-icons/io5";
+import { MouseEvent, useState } from "react";
+import { IoCarOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { useQueryStore } from "@/hooks/floppy-disk/use-queryStore";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { Button } from "../ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import {
     Drawer,
     DrawerClose,
@@ -23,7 +14,6 @@ import {
     DrawerTitle,
     DrawerTrigger
 } from "../ui/drawer";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
     isSearchPage?: boolean;
@@ -31,31 +21,43 @@ interface prop {
     className?: string;
 }
 
-export default function TimeDialog({ isSearchPage, displayIcon, className }: prop) {
-    const time = useQueryStore("time");
+export default function DriverDialog({ isSearchPage, displayIcon, className }: prop) {
+    const driver = useQueryStore("driver");
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
 
-    const title = "Pilih Waktu Penjemputan";
-    const content = (
-        <ScrollArea className="h-full">
-            <div className="grid grid-cols-3 items-center justify-center gap-2 md:grid-cols-5">
-                {new Array(24).fill(0).map((_, i) => (
-                    <Button
-                        key={i}
-                        variant="outline"
-                        className="justify-center font-semibold"
-                        onClick={handleSelect.bind(null, i)}
-                    >
-                        {i < 10 ? `0${i}` : i}:00
-                    </Button>
-                ))}
-            </div>
-        </ScrollArea>
+    const title = "Pilih Tipe Penyewaan";
+    const Content = () => (
+        <section className="flex gap-3">
+            <Button
+                id="with"
+                size="sm"
+                variant="outline"
+                className={cn(
+                    "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                    driver && "bg-[#1877F2] text-background"
+                )}
+                onClick={handleSelect}
+            >
+                Dengan Driver
+            </Button>
+            <Button
+                id="without"
+                size="sm"
+                variant="outline"
+                className={cn(
+                    "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                    !driver && "bg-[#1877F2] text-background"
+                )}
+                onClick={handleSelect}
+            >
+                Tanpa Driver
+            </Button>
+        </section>
     );
 
-    function handleSelect(time?: number) {
-        useQueryStore.set({ time: `${time!}` });
+    function handleSelect(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
+        useQueryStore.set({ driver: e.currentTarget.id === "with" });
         setOpen(false);
     }
 
@@ -63,12 +65,16 @@ export default function TimeDialog({ isSearchPage, displayIcon, className }: pro
         return (
             <Button
                 variant={isSearchPage ? "ghost" : "outline"}
-                className={cn("justify-start font-semibold", className)}
+                className={cn("justify-start font-semibold capitalize", className)}
             >
-                {displayIcon && <IoTime />}
-                {time.length ? (Number(time) < 10 ? `0${time}` : time) : 1}:00
+                {displayIcon && <IoCarOutline />}
+                {driver ? "Dengan Driver" : "Tanpa Driver"}
             </Button>
         );
+    }
+
+    if (!isSearchPage) {
+        return <Content />;
     }
 
     if (isDesktop) {
@@ -79,11 +85,7 @@ export default function TimeDialog({ isSearchPage, displayIcon, className }: pro
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{title}</DialogTitle>
                     </DialogHeader>
-                    {content}
-                    <DialogFooter className="text-sm font-medium text-foreground/60 sm:flex-col sm:space-x-0">
-                        <p>* Waktu yang dipilih sesuai dengan waktu tempat di lokasi sewa.</p>
-                        <p>** Pemesanan minimal dilakukan 3 jam sebelum waktu penjemputan.</p>
-                    </DialogFooter>
+                    <Content />
                 </DialogContent>
             </Dialog>
         );
@@ -96,7 +98,9 @@ export default function TimeDialog({ isSearchPage, displayIcon, className }: pro
                 <DrawerHeader className="text-left">
                     <DrawerTitle className="text-2xl">{title}</DrawerTitle>
                 </DrawerHeader>
-                <div className="min-h-60 p-4">{content}</div>
+                <div className="min-h-60 p-4">
+                    <Content />
+                </div>
                 <DrawerFooter className="pt-2">
                     <DrawerClose asChild>
                         <Button variant="secondary">Cancel</Button>

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
-import { GoClockFill } from "react-icons/go";
+import { IoHourglassOutline } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import { useQueryStore } from "@/hooks/floppy-disk/use-queryStore";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
@@ -20,17 +19,16 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 
 interface prop {
+    isSearchPage?: boolean;
+    displayIcon?: boolean;
     className?: string;
 }
 
-export default function DurationDialog({ className }: prop) {
-    const pathname = usePathname();
+export default function DurationDialog({ isSearchPage, displayIcon, className }: prop) {
+    const duration = useQueryStore("duration");
+    const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
 
-    const isDesktop = useMediaQuery("(min-width: 768px)");
-    const duration = useQueryStore("duration");
-
-    const isSearchPage = pathname === "/search";
     const title = "Pilih Durasi Sewa";
     const content = (
         <ScrollArea className="h-full">
@@ -60,7 +58,7 @@ export default function DurationDialog({ className }: prop) {
                 variant={isSearchPage ? "ghost" : "outline"}
                 className={cn("justify-start font-semibold", className)}
             >
-                {!isSearchPage && <GoClockFill />}
+                {displayIcon && <IoHourglassOutline />}
                 {duration.length ? duration : 1} hari
             </Button>
         );

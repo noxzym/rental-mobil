@@ -1,7 +1,6 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { usePathname } from "next/navigation";
 import { IoSearch } from "react-icons/io5";
 import { MdLocationOn } from "react-icons/md";
 import { cn } from "@/lib/utils";
@@ -10,7 +9,7 @@ import { isSearchCase, useWilayahQuery } from "@/hooks/floppy-disk/use-wilayahQu
 import { useDebounce } from "@/hooks/use-debounce";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { CustomInput } from "../CustomInput";
-import { Button } from "../ui/button";
+import { Button, ButtonProps } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import {
     Drawer,
@@ -24,10 +23,12 @@ import {
 import { Separator } from "../ui/separator";
 
 interface prop {
+    isSearchPage?: boolean;
+    displayIcon?: boolean;
     className?: string;
 }
 
-export default function LocationDialog({ className }: prop) {
+export default function LocationDialog({ isSearchPage, displayIcon, className }: prop) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
     const [newState, setNewState] = useState<string | null>(null);
@@ -40,8 +41,6 @@ export default function LocationDialog({ className }: prop) {
         query: query ?? undefined
     });
 
-    const pathname = usePathname();
-    const isSearchPage = pathname === "/search";
     const title = "Pilih Kota Tujuan";
     const input = (
         <CustomInput
@@ -63,7 +62,7 @@ export default function LocationDialog({ className }: prop) {
                 variant={isSearchPage ? "ghost" : "outline"}
                 className={cn("justify-start font-semibold capitalize", className)}
             >
-                {!isSearchPage && <MdLocationOn />}
+                {displayIcon && <MdLocationOn />}
                 {data
                     ?.find(({ id }) => id === location)
                     ?.nama.toLowerCase()
