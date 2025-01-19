@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { StatusBooking } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -51,23 +52,23 @@ export async function GET(request: NextRequest) {
             ...(status === "completed" && {
                 endDate: { lt: new Date() },
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }),
             ...(status === "inProgress" && {
                 startDate: { lte: new Date() },
                 endDate: { gte: new Date() },
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }),
             ...(status === "incoming" && {
                 startDate: { gt: new Date() },
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }),
-            ...(status === "canceled" && { status: "CANCELED" })
+            ...(status === "canceled" && { status: StatusBooking.Canceled })
         },
         include: {
             mobil: true

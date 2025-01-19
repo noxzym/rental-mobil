@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { StatusMobil } from "@prisma/client";
+import { StatusBooking, StatusMobil } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { CarStoreType } from "@/hooks/floppy-disk/use-carStore";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,15 +10,15 @@ export default async function ManageCarPage() {
         include: {
             booking: {
                 where: {
-                    status: "ONGOING"
+                    status: StatusBooking.OnGoing
                 }
             }
         }
     });
 
-    const readyCars = mobil.filter(car => car.status === StatusMobil.READY);
-    const onGoingCars = mobil.filter(car => car.status === StatusMobil.BOOKED);
-    const inMaintenanceCars = mobil.filter(car => car.status === StatusMobil.MAINTENANCE);
+    const readyCars = mobil.filter(car => car.status === StatusMobil.Ready);
+    const onGoingCars = mobil.filter(car => car.status === StatusMobil.Booked);
+    const inMaintenanceCars = mobil.filter(car => car.status === StatusMobil.Maintenance);
 
     const CarList = [
         {

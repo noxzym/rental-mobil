@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { StatusBooking } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 export async function GET() {
@@ -10,7 +11,7 @@ export async function GET() {
             where: {
                 endDate: { lt: today },
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             },
             select: {
@@ -43,7 +44,7 @@ export async function GET() {
         const totalPemesanan = await prisma.booking.count({
             where: {
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }
         });
@@ -60,7 +61,7 @@ export async function GET() {
                 startDate: { lte: todayEnd },
                 endDate: { gte: todayStart },
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }
         });

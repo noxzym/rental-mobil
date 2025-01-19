@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, StatusBooking } from "@prisma/client";
 import { CarStoreType } from "@/hooks/floppy-disk/use-carStore";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
@@ -10,7 +10,7 @@ type props = {
         include: {
             booking: {
                 where: {
-                    status: "ONGOING";
+                    status: typeof StatusBooking.OnGoing;
                 };
             };
         };

@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, ComponentProps, useEffect, useState } from "react";
-import { Prisma, Transmisi } from "@prisma/client";
+import { Prisma, StatusBooking, Transmisi } from "@prisma/client";
 import { Edit2, Save, Trash, X } from "lucide-react";
 import { PiPalette } from "react-icons/pi";
 import { PiSeatbelt } from "react-icons/pi";
@@ -39,7 +39,7 @@ type props = {
         include: {
             booking: {
                 where: {
-                    status: "ONGOING";
+                    status: typeof StatusBooking.OnGoing;
                 };
             };
         };

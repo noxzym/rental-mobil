@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import { StatusBooking, StatusMobil } from "@prisma/client";
 import { number } from "zod";
+import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
                 where: {
                     endDate: { lt: today },
                     status: {
-                        not: "CANCELED"
+                        not: StatusBooking.Canceled
                     }
                 },
                 include: {
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest) {
                     startDate: { lte: today },
                     endDate: { gte: today },
                     status: {
-                        not: "CANCELED"
+                        not: StatusBooking.Canceled
                     }
                 },
                 include: {
@@ -76,7 +77,7 @@ export async function GET(request: NextRequest) {
                 where: {
                     startDate: { gt: today },
                     status: {
-                        not: "CANCELED"
+                        not: StatusBooking.Canceled
                     }
                 },
                 include: {
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest) {
         } else if (status === "canceled") {
             bookings = await prisma.booking.findMany({
                 where: {
-                    status: "CANCELED"
+                    status: StatusBooking.Canceled
                 },
                 include: {
                     account: true
@@ -121,29 +122,29 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     const searchParams = await request.json();
-    
+
     try {
         // First, verify that the car exists and is available
         const car = await prisma.mobil.findFirst({
             where: {
                 id: searchParams["mobil_id"],
-                status: "READY"  // Only allow booking READY cars
+                status: StatusMobil.Ready
             }
         });
 
         if (!car) {
             return NextResponse.json(
-                { error: "Car not available or doesn't exist" }, 
+                { error: "Car not available or doesn't exist" },
                 { status: 400 }
             );
         }
 
         // Create the booking and update car status in a transaction
-        const booking = await prisma.$transaction(async (tx) => {
+        const booking = await prisma.$transaction(async tx => {
             // Update car status to BOOKED
             await tx.mobil.update({
                 where: { id: searchParams["mobil_id"] },
-                data: { status: "BOOKED" }
+                data: { status: StatusMobil.Booked }
             });
 
             // Create the booking
@@ -162,18 +163,14 @@ export async function POST(request: NextRequest) {
                     mobil: {
                         connect: { id: searchParams["mobil_id"] }
                     },
-                    status: "ONGOING"
+                    status: StatusBooking.OnGoing
                 }
             });
         });
 
         return NextResponse.json(booking);
-        
     } catch (error) {
         console.error("Error creating booking:", error);
-        return NextResponse.json(
-            { error: "Failed to create booking" }, 
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
     }
 }

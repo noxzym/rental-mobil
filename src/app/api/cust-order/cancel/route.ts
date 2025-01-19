@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { StatusBooking } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
                 account: { email: session.user.email },
                 startDate: { gt: new Date() }, // Only allow canceling future bookings
                 status: {
-                    not: "CANCELED"
+                    not: StatusBooking.Canceled
                 }
             }
         });
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
         // Update the booking
         const updatedBooking = await prisma.booking.update({
             where: { id: bookingId },
-            data: { status: "CANCELED" }
+            data: { status: StatusBooking.Canceled }
         });
 
         return NextResponse.json(updatedBooking);

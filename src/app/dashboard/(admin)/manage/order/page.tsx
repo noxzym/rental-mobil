@@ -14,27 +14,27 @@ export default async function ManageOrderPage() {
 
     if (
         booking.filter(
-            order => order.status === StatusBooking.ONGOING && order.endDate < new Date()
+            order => order.status === StatusBooking.OnGoing && order.endDate < new Date()
         ).length
     ) {
         await prisma.booking.updateMany({
             where: {
-                status: StatusBooking.ONGOING,
+                status: StatusBooking.OnGoing,
                 endDate: {
                     lte: new Date()
                 }
             },
             data: {
-                status: StatusBooking.FINISHED
+                status: StatusBooking.Finished
             }
         });
     }
 
     const onGoingData = booking.filter(
-        order => order.endDate > new Date() && order.status === StatusBooking.ONGOING
+        order => order.endDate > new Date() && order.status === StatusBooking.OnGoing
     );
-    const canceledData = booking.filter(order => order.status === StatusBooking.CANCELED);
-    const finishedData = booking.filter(order => order.status === StatusBooking.FINISHED);
+    const canceledData = booking.filter(order => order.status === StatusBooking.Canceled);
+    const finishedData = booking.filter(order => order.status === StatusBooking.Finished);
 
     const BookingData = [
         {
@@ -59,10 +59,10 @@ export default async function ManageOrderPage() {
                 id
             },
             data: {
-                status: StatusBooking.CANCELED,
+                status: StatusBooking.Canceled,
                 mobil: {
                     update: {
-                        status: StatusMobil.READY
+                        status: StatusMobil.Ready
                     }
                 }
             }

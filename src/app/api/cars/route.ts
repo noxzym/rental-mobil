@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import { Prisma, StatusMobil } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getBookingDates } from "@/lib/utils";
 
@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
     let prismaQuery: Prisma.mobilFindManyArgs = {
         where: {
             status: isAvailable
-                ? "READY"
+                ? StatusMobil.Ready
                 : {
-                      not: "READY"
+                      not: StatusMobil.Ready
                   }
         },
         orderBy: {
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     };
 
     if (date && duration) {
-        const { startDate, endDate } = getBookingDates(date, parseInt(duration));
+        const { startDate, endDate } = getBookingDates(Number(date), parseInt(duration));
 
         prismaQuery.where!.booking = {
             none: {
@@ -71,7 +71,7 @@ export async function PATCH(request: NextRequest) {
     const updatedCar = await prisma.mobil
         .update({
             where: { id },
-            data: { status: status === true ? "READY" : "MAINTENANCE" }
+            data: { status: status === true ? StatusMobil.Ready : StatusMobil.Maintenance }
         })
         .catch(error => ({ error }));
 

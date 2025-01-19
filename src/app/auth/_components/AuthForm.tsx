@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, LockKeyhole, Mail, User } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { createUser, findUserByUnique } from "@/lib/actions";
+import { createAccount, findAccountByUnique } from "@/lib/actions";
 import { formSchema, formSchemaType } from "@/lib/schemas";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export default function AuthForm({ action }: props) {
 
     async function onSubmit(data: formSchemaType) {
         if (action === "register") {
-            const newUser = await createUser(data);
+            const newUser = await createAccount({ data });
             if ("error" in newUser) {
                 toast({
                     title: "Gagal mendaftar!",
@@ -45,7 +45,7 @@ export default function AuthForm({ action }: props) {
             }
         }
 
-        const userDB = await findUserByUnique(data);
+        const userDB = await findAccountByUnique({ where: { email: data.email } });
         if (!userDB) {
             toast({
                 title: "Gagal masuk!",

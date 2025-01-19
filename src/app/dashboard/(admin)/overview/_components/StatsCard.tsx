@@ -11,12 +11,12 @@ type props = {
 
 export default function StatsCard({ booking }: props) {
     const completedBooking = booking.filter(
-        order => order.status !== StatusBooking.CANCELED && order.endDate < new Date()
+        order => order.status !== StatusBooking.Canceled && order.endDate < new Date()
     );
 
-    const totalPemesanan = booking.filter(order => order.status !== StatusBooking.CANCELED).length;
+    const totalPemesanan = booking.filter(order => order.status !== StatusBooking.Canceled).length;
     const totalMobilTerpakaiSekarang = booking.filter(
-        order => order.status === StatusBooking.ONGOING
+        order => order.status === StatusBooking.OnGoing
     ).length;
     const totalPendapatan = completedBooking.reduce((total, order) => {
         const diffTime = Math.abs(order.endDate.getTime() - order.startDate.getTime());
