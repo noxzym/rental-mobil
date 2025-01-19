@@ -104,7 +104,7 @@ export default function Alamat({ user }: props) {
                 <div className="flex flex-col gap-3">
                     <p className="text-sm">Alamat Lengkap</p>
                     <Input
-                        id="Alamat Lengkap"
+                        name="Alamat Lengkap"
                         type="text"
                         placeholder="Jl. ... RT. ... RW. ..."
                         value={alamatLengkap ?? undefined}
