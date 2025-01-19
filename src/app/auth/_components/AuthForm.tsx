@@ -35,7 +35,13 @@ export default function AuthForm({ action }: props) {
 
     async function onSubmit(data: formSchemaType) {
         if (action === "register") {
-            const newUser = await createAccount({ data });
+            const newUser = await createAccount({
+                data: {
+                    email: data.email,
+                    nama: data.nama,
+                    password: data.password
+                }
+            });
             if ("error" in newUser) {
                 toast({
                     title: "Gagal mendaftar!",
