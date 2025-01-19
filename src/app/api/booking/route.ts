@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
                 schedule: {
                     startDate: booking.startDate.toISOString().split("T")[0],
                     endDate: booking.endDate.toISOString().split("T")[0],
-                    pickupTime: booking.pickupTime.toISOString().split("T")[1].slice(0, 5)
+                    pickupTime: booking.pickupTime
                 },
                 destination: booking.kabukota?.nama,
                 status: booking.status
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
                     kabukota: {
                         connect: { id: searchParams["kabukota_tujuan"] }
                     },
-                    pickupTime: new Date(searchParams["pickup_time"]),
+                    pickupTime: searchParams["pickup_time"],
                     driver: searchParams["driver"],
                     startDate: new Date(Number(searchParams["start_date"])),
                     endDate: new Date(Number(searchParams["end_date"])),
