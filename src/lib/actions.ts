@@ -32,6 +32,10 @@ export async function findAccountByUnique(data: Prisma.accountFindUniqueArgs) {
     return prisma.account.findUnique(data);
 }
 
+export async function deleteAccount(data: Prisma.accountDeleteArgs) {
+    return prisma.account.delete(data);
+}
+
 export async function createBooking(createData: Prisma.bookingCreateArgs) {
     return prisma.booking.create(createData);
 }
