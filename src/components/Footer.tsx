@@ -4,34 +4,34 @@ import Logo from "./Logo";
 
 export default function Footer() {
     return (
-        <footer className="bg-foreground px-20 pt-16 text-background">
-            <div className="container flex justify-between px-0">
+        <footer className="bg-foreground px-4 pt-6 text-background md:px-20 md:pt-16">
+            <div className="container flex flex-col justify-between gap-5 px-0 md:flex-row">
                 <section>
                     <Logo textColor="#FFFFFF" dotColor="#FFB534" />
                     <p className="max-w-sm pt-4">
                         Rent.Id - Find car that fit your style and budget with ease and convenience
                     </p>
                 </section>
-                <section className="grid auto-cols-max grid-cols-3 items-start gap-8">
-                    <div className="flex flex-col justify-center">
+                <section className="grid auto-cols-max items-start gap-8 md:grid-cols-3">
+                    <div className="flex flex-col justify-center gap-3 md:gap-6">
                         <p className="text-xl font-bold">Navigation</p>
-                        <div className="grid gap-2 pt-6">
+                        <div className="grid gap-2">
                             <Link href="/home">Home</Link>
                             <Link href="/search">Search</Link>
                             <Link href="#">About</Link>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center">
+                    <div className="flex flex-col justify-center gap-3 md:gap-6">
                         <p className="text-xl font-bold">Legal</p>
-                        <div className="grid gap-2 pt-6">
+                        <div className="grid gap-2">
                             <Link href="#">Privacy Policy</Link>
                             <Link href="#">Terms of Service</Link>
                             <Link href="#">Refund Policy</Link>
                         </div>
                     </div>
-                    <div className="flex flex-col justify-center">
+                    <div className="flex flex-col justify-center gap-3 md:gap-6">
                         <p className="text-xl font-bold">Support</p>
-                        <div className="grid gap-2 pt-6">
+                        <div className="grid gap-2">
                             <Link href="#">FAQ</Link>
                             <Link href="#">Email</Link>
                             <Link href="#">Whatsapp</Link>
@@ -39,8 +39,8 @@ export default function Footer() {
                     </div>
                 </section>
             </div>
-            <div className="container mt-12 flex items-center justify-between border-t-1 border-background/80 px-0 py-6">
-                <p className="text-center text-xs font-medium">
+            <div className="container mt-12 flex flex-col justify-between gap-5 border-t-1 border-background/80 px-0 py-6 md:flex-row md:items-center">
+                <p className="text-xs font-medium md:text-center">
                     Copyright &copy; 2024 Rent.Id. All rights reserved.
                 </p>
                 <a href="#" className="font-bold hover:text-background/80">
