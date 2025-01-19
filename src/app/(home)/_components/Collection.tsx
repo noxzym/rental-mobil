@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Prisma } from "@prisma/client";
+import { formatCurrency } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -42,18 +44,9 @@ export default async function CollectionSection({ mobil }: props) {
         }
     }
 
-    function formatPrice(price: number) {
-        return new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(price);
-    }
-
     return (
         <section className="flex w-full flex-col items-center gap-10">
-            <p className="text-3xl font-bold">Koleksi Kami</p>
+            <p className="text-3xl font-bold">Pilihan Terbaik Kami</p>
             <div className="grid w-full grid-rows-2 gap-5 md:grid-cols-3">
                 {mobil.map(car => (
                     <div
@@ -73,7 +66,9 @@ export default async function CollectionSection({ mobil }: props) {
                                 <BrandIcon brand={car.merek} />
                             </span>
                             <div className="flex flex-col">
-                                <p className="text-lg font-bold">{car.model}</p>
+                                <p className="text-lg font-bold">
+                                    {car.merek} {car.model}
+                                </p>
                                 <p className="text-sm font-medium text-foreground/60">
                                     {car.transmisi} - {car.tahun}
                                 </p>
@@ -92,11 +87,13 @@ export default async function CollectionSection({ mobil }: props) {
                         <span className="flex px-5">
                             <Separator />
                         </span>
-                        <p className="px-5 text-lg font-bold">{formatPrice(car.harga)},-</p>
+                        <p className="px-5 text-lg font-bold">{formatCurrency(car.harga)}</p>
                     </div>
                 ))}
             </div>
-            <Button size="lg">Jelajahi Semua Mobil</Button>
+            <Button size="lg" asChild>
+                <Link href="/search">Jelajahi Semua Mobil</Link>
+            </Button>
         </section>
     );
 }

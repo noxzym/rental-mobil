@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Prisma } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -9,7 +8,7 @@ type props = {
 export default function ReviewSection({ mobil }: props) {
     return (
         <section className="flex w-full flex-col items-center gap-10">
-            <p className="text-3xl font-bold">Kata Mereka Tentang Kami</p>
+            <p className="text-3xl font-bold">Ulasan Terbaru</p>
             <div className="grid w-full gap-5 md:grid-cols-3">
                 {mobil.slice(0, 3).map((car, index) => (
                     <div
