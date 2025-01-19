@@ -1,27 +1,30 @@
 "use client";
 
-import { ComponentProps } from "react";
 import { Prisma } from "@prisma/client";
 import { PiPalette } from "react-icons/pi";
 import { PiSeatbelt } from "react-icons/pi";
 import { RiSteeringLine } from "react-icons/ri";
-import { RxCardStackMinus } from "react-icons/rx";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
+import { useCarStore } from "@/hooks/floppy-disk/use-carStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { useSelectedCarStore } from "@/hooks/floppy-disk/use-selectedCarStore";
 
 type props = {
     mobil: Prisma.mobilGetPayload<{}>;
 };
 
 export default function Car({ mobil }: props) {
-    const { setSelectedCar } = useSelectedCarStore();
+    const carStore = useCarStore({ id: "selected" });
 
     const handleSelectCar = () => {
-        setSelectedCar(mobil);
-        console.log("Selected car:", mobil);
-        console.log(useSelectedCarStore());
+        useCarStore.set(
+            {
+                id: "selected"
+            },
+            {
+                ...mobil
+            }
+        );
     };
 
     const hargaSewa = formatCurrency(mobil.harga);
@@ -29,7 +32,10 @@ export default function Car({ mobil }: props) {
     return (
         <Card
             onClick={handleSelectCar}
-            className="grid cursor-pointer grid-cols-5 items-center gap-4 border-none p-3 transition-all duration-150 hover:bg-foreground/5 hover:shadow"
+            className={cn(
+                "grid cursor-pointer grid-cols-5 items-center gap-4 border-none p-3 transition-all duration-150 hover:bg-foreground/5 hover:shadow",
+                carStore.id === mobil.id && "bg-foreground/5 shadow"
+            )}
         >
             <Avatar className="aspect-video h-auto w-full !rounded-lg">
                 <AvatarImage
@@ -43,17 +49,11 @@ export default function Car({ mobil }: props) {
                 <p className="col-span-4 text-lg font-semibold">
                     {mobil.merek} {mobil.model} ({mobil.tahun})
                 </p>
-                <div className="col-span-2 flex flex-col gap-1">
-                    <p className="text-sm font-medium">
-                        <RxCardStackMinus className="mr-1 inline size-4" />
-                        {mobil.plat}
-                    </p>
+                <div className="col-span-4 grid w-full grid-cols-2 gap-1">
                     <p className="text-sm font-medium">
                         <RiSteeringLine className="mr-1 inline size-4 capitalize" />
                         {mobil.transmisi.toLowerCase()}
                     </p>
-                </div>
-                <div className="col-span-2 flex flex-col gap-1">
                     <p className="text-sm font-medium">
                         <PiPalette className="mr-1 inline size-4" />
                         {mobil.warna}
