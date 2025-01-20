@@ -39,6 +39,7 @@ export default function Biodata({ user }: props) {
     const noTelepon = profileStore.isEditing ? profileStore.noTelepon : user.noTelepon;
     const jenisKelamin = profileStore.isEditing ? profileStore.jenisKelamin : user.jenisKelamin;
     const tanggalLahir = profileStore.isEditing ? profileStore.tanggalLahir : user.tanggalLahir;
+    const fotoProfil = profileStore.isEditing ? profileStore.avatar : user.avatar;
 
     const biodata: ComponentProps<"input">[] = [
         {
@@ -71,6 +72,12 @@ export default function Biodata({ user }: props) {
             // @ts-expect-error
             value: tanggalLahir ?? undefined,
             type: "date"
+        },
+        {
+            name: "Tautan Foto",
+            placeholder: "https://cdn.noxzym.my.id/images/foto_profil.jpg",
+            value: fotoProfil ?? undefined,
+            type: "text"
         }
     ];
 
@@ -102,6 +109,13 @@ export default function Biodata({ user }: props) {
                 useProfileStore.set({
                     ...profileStore,
                     tanggalLahir: new Date(e.target.value)
+                });
+                break;
+
+            case "Tautan Foto":
+                useProfileStore.set({
+                    ...profileStore,
+                    avatar: e.target.value
                 });
                 break;
         }

@@ -1,13 +1,14 @@
 "use client";
 
-import { ChangeEvent, ComponentProps, useEffect, useState } from "react";
-import { Prisma, StatusBooking, Transmisi } from "@prisma/client";
+import { ChangeEvent, ComponentProps, MouseEvent, useEffect, useState } from "react";
+import { Prisma, StatusBooking, StatusMobil, Transmisi } from "@prisma/client";
 import { Edit2, Save, Trash, X } from "lucide-react";
 import { PiPalette } from "react-icons/pi";
 import { PiSeatbelt } from "react-icons/pi";
 import { RiSteeringLine } from "react-icons/ri";
 import { RxCardStackMinus } from "react-icons/rx";
-import { formatCurrency } from "@/lib/utils";
+import { deleteMobil, updateMobil } from "@/lib/actions";
+import { cn, formatCurrency } from "@/lib/utils";
 import { CarStoreType, useCarStore } from "@/hooks/floppy-disk/use-carStore";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -44,11 +45,9 @@ type props = {
             };
         };
     }>;
-    onSave?: (carStore: CarStoreType) => void;
-    onDelete?: (id: string) => void;
 };
 
-export default function ManageCar({ mobil, onSave, onDelete }: props) {
+export default function ManageCar({ mobil }: props) {
     const carStore = useCarStore({ id: mobil.id });
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
@@ -144,14 +143,29 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
         handleEditButton();
     }
 
-    function handleSaveButton() {
+    async function handleSaveButton() {
+        await updateMobil({
+            where: { id: mobil.id },
+            data: {
+                merek: carStore.merek,
+                model: carStore.model,
+                warna: carStore.warna,
+                tahun: carStore.tahun,
+                transmisi: carStore.transmisi,
+                plat: carStore.plat,
+                status: carStore.status,
+                bangku: carStore.bangku,
+                harga: carStore.harga
+            }
+        });
         handleEditButton();
-        onSave && onSave(carStore);
     }
 
-    function handleDeleteButton() {
+    async function handleDeleteButton() {
+        await deleteMobil({
+            where: { id: mobil.id }
+        });
         setOpen(false);
-        onDelete && onDelete(mobil.id);
     }
 
     function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
@@ -184,6 +198,10 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                 useCarStore.set({ id: mobil.id }, { harga: parseInt(value) });
                 break;
         }
+    }
+
+    function handleSelect(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
+        useCarStore.set({ id: mobil.id }, { status: e.currentTarget.id as StatusMobil });
     }
 
     function triggerButton() {
@@ -309,15 +327,67 @@ export default function ManageCar({ mobil, onSave, onDelete }: props) {
                         <div className="col-span-2 flex flex-col gap-3">
                             {CarData.map((data, index) => (
                                 <div key={index} className="grid grid-cols-5 items-center">
-                                    <p className="text-sm">{data.name}</p>
-                                    <Input
-                                        name={data.name}
-                                        type={data.type}
-                                        value={data.value}
-                                        onChange={handleOnChange}
-                                        disabled={!carStore.isEditing}
-                                        className="col-span-4 !cursor-default bg-gray-50"
-                                    />
+                                    {data.name === "Status" ? (
+                                        <>
+                                            <p className="text-sm">{data.name}</p>
+                                            <section className="col-span-3 grid grid-cols-3 gap-3">
+                                                <Button
+                                                    id={StatusMobil.Ready}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleSelect}
+                                                    disabled={!carStore.isEditing}
+                                                    className={cn(
+                                                        "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                                        data.value === StatusMobil.Ready &&
+                                                            "bg-[#1877F2] text-background"
+                                                    )}
+                                                >
+                                                    Ready
+                                                </Button>
+                                                <Button
+                                                    id={StatusMobil.Maintenance}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleSelect}
+                                                    disabled={!carStore.isEditing}
+                                                    className={cn(
+                                                        "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                                        data.value === StatusMobil.Maintenance &&
+                                                            "bg-[#1877F2] text-background"
+                                                    )}
+                                                >
+                                                    Dalam Perawatan
+                                                </Button>
+                                                <Button
+                                                    id={StatusMobil.Booked}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleSelect}
+                                                    disabled={!carStore.isEditing}
+                                                    className={cn(
+                                                        "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                                        data.value === StatusMobil.Booked &&
+                                                            "bg-[#1877F2] text-background"
+                                                    )}
+                                                >
+                                                    Dibooking
+                                                </Button>
+                                            </section>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <p className="text-sm">{data.name}</p>
+                                            <Input
+                                                name={data.name}
+                                                type={data.type}
+                                                value={data.value}
+                                                onChange={handleOnChange}
+                                                disabled={!carStore.isEditing}
+                                                className="col-span-4 !cursor-default bg-gray-50"
+                                            />
+                                        </>
+                                    )}
                                 </div>
                             ))}
                         </div>

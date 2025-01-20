@@ -15,11 +15,9 @@ type props = {
             };
         };
     }>[];
-    onSave: (carStore: CarStoreType) => Promise<void>;
-    onDelete: (id: string) => Promise<void>;
 };
 
-export default function CarTab({ tab, mobil, onSave, onDelete }: props) {
+export default function CarTab({ tab, mobil }: props) {
     function AddCarButton() {
         return <Button>Tambah Mobil</Button>;
     }
@@ -29,7 +27,7 @@ export default function CarTab({ tab, mobil, onSave, onDelete }: props) {
             <section className="flex h-full flex-col gap-3 rounded-xl bg-background px-4 py-5 shadow">
                 <AddCarButton />
                 {mobil.map((car, index) => (
-                    <ManageCar key={index} mobil={car} onSave={onSave} onDelete={onDelete} />
+                    <ManageCar key={index} mobil={car} />
                 ))}
             </section>
         </TabsContent>

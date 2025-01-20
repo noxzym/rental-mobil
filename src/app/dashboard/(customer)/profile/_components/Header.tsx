@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { Edit2, Save, X } from "lucide-react";
-import { Session } from "next-auth";
-import prisma from "@/lib/prisma";
+import { updateAccount } from "@/lib/actions";
 import { profileStoreType, useProfileStore } from "@/hooks/floppy-disk/use-profileStore";
 import { Button } from "@/components/ui/button";
 
@@ -27,16 +25,16 @@ interface props {
             };
         };
     }>;
-    onSave: (profileStore: profileStoreType) => void;
 }
 
-export default function Header({ user, onSave }: props) {
+export default function Header({ user }: props) {
     const profileStore = useProfileStore();
 
     useEffect(() => {
         const key: (keyof profileStoreType)[] = [
             "nama",
             "email",
+            "avatar",
             "jenisKelamin",
             "tanggalLahir",
             "avatar",
@@ -93,8 +91,22 @@ export default function Header({ user, onSave }: props) {
         });
     }
 
-    function handleSave() {
-        onSave(profileStore);
+    async function handleSave() {
+        await updateAccount({
+            where: {
+                email: profileStore.email!
+            },
+            data: {
+                nama: profileStore!.nama,
+                avatar: profileStore!.avatar,
+                noTelepon: profileStore!.noTelepon,
+                jenisKelamin: profileStore!.jenisKelamin,
+                tanggalLahir: profileStore!.tanggalLahir,
+                alamat: profileStore!.kelurahan,
+                detailAlamat: profileStore!.detailAlamat
+            }
+        });
+
         handleEdit();
     }
 

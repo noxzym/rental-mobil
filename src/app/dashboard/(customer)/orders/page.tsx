@@ -1,5 +1,5 @@
-import { revalidatePath } from "next/cache";
-import { StatusBooking, StatusMobil } from "@prisma/client";
+import { StatusBooking } from "@prisma/client";
+import { findAccountByUnique } from "@/lib/actions";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +7,7 @@ import BookingTab from "./_components/BookingTab";
 
 export default async function OrdersPage() {
     const session = await auth();
-    const user = await prisma.account.findUnique({
+    const user = await findAccountByUnique({
         where: {
             email: session?.user.email!
         }
@@ -64,26 +64,6 @@ export default async function OrdersPage() {
         }
     ];
 
-    async function handleCancelBooking(id: string) {
-        "use server";
-
-        await prisma.booking.update({
-            where: {
-                id
-            },
-            data: {
-                status: StatusBooking.Canceled,
-                mobil: {
-                    update: {
-                        status: StatusMobil.Ready
-                    }
-                }
-            }
-        });
-
-        revalidatePath("/dashboard/orders");
-    }
-
     return (
         <Tabs defaultValue="ongoing" className="col-span-3 flex flex-col">
             <TabsList className="sticky top-[92px] z-10 grid grid-cols-3 rounded-xl shadow [&_button]:rounded-xl">
@@ -92,12 +72,7 @@ export default async function OrdersPage() {
                 <TabsTrigger value="canceled">Dibatalkan</TabsTrigger>
             </TabsList>
             {BookingData.map((data, index) => (
-                <BookingTab
-                    key={index}
-                    tab={data.tab}
-                    booking={data.booking}
-                    onCancel={handleCancelBooking}
-                />
+                <BookingTab key={index} tab={data.tab} booking={data.booking} />
             ))}
         </Tabs>
     );

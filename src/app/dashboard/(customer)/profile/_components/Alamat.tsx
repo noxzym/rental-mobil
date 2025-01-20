@@ -84,16 +84,10 @@ export default function Alamat({ user }: props) {
     function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
         e.preventDefault();
 
-        const target = e.target.name;
-
-        switch (target) {
-            case "Alamat Lengkap":
-                useProfileStore.set({
-                    ...profileStore,
-                    detailAlamat: e.target.value
-                });
-                break;
-        }
+        useProfileStore.set({
+            ...profileStore,
+            detailAlamat: e.target.value
+        });
     }
 
     return (

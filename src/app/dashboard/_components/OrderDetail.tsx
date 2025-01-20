@@ -1,8 +1,9 @@
 "use client";
 
 import { ComponentProps, useState } from "react";
-import { Prisma } from "@prisma/client";
+import { Prisma, StatusBooking, StatusMobil } from "@prisma/client";
 import { CiLocationArrow1, CiTimer } from "react-icons/ci";
+import { updateBooking } from "@/lib/actions";
 import { formatCurrency, formatDate, getBookingDuration, getBookingPrices } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-mediaQuery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,10 +34,9 @@ import {
 type props = {
     tab: string;
     booking: Prisma.bookingGetPayload<{ include: { mobil: true; kabukota: true } }>;
-    onCancel?: (id: string) => void;
 };
 
-export default function OrderDetail({ tab, booking, onCancel }: props) {
+export default function OrderDetail({ tab, booking }: props) {
     const isDesktop = useMediaQuery("(min-width: 768px)");
     const [open, setOpen] = useState(false);
 
@@ -143,9 +143,20 @@ export default function OrderDetail({ tab, booking, onCancel }: props) {
         );
     }
 
-    function handleCancelBookingButton() {
+    async function handleCancelBookingButton() {
+        await updateBooking({
+            where: { id: booking.id },
+            data: {
+                status: StatusBooking.Canceled,
+                mobil: {
+                    update: {
+                        status: StatusMobil.Ready
+                    }
+                }
+            }
+        });
+
         setOpen(false);
-        onCancel && onCancel(booking.id);
     }
 
     if (isDesktop) {
