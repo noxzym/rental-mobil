@@ -200,7 +200,11 @@ export default function ManageCar({ mobil }: props) {
         }
     }
 
-    function handleSelect(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
+    function handleTransmisiChange(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
+        useCarStore.set({ id: mobil.id }, { transmisi: e.currentTarget.id as Transmisi });
+    }
+
+    function handleStatusChange(e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) {
         useCarStore.set({ id: mobil.id }, { status: e.currentTarget.id as StatusMobil });
     }
 
@@ -225,8 +229,8 @@ export default function ManageCar({ mobil }: props) {
                             {mobil.plat}
                         </p>
                         <p className="text-sm font-medium">
-                            <RiSteeringLine className="mr-1 inline size-4 capitalize" />
-                            {mobil.transmisi.toLowerCase()}
+                            <RiSteeringLine className="mr-1 inline size-4" />
+                            {mobil.transmisi}
                         </p>
                     </div>
                     <div className="col-span-2 flex flex-col gap-1">
@@ -327,15 +331,50 @@ export default function ManageCar({ mobil }: props) {
                         <div className="col-span-2 flex flex-col gap-3">
                             {CarData.map((data, index) => (
                                 <div key={index} className="grid grid-cols-5 items-center">
-                                    {data.name === "Status" ? (
+                                    {data.name === "Transmisi" && (
                                         <>
                                             <p className="text-sm">{data.name}</p>
                                             <section className="col-span-3 grid grid-cols-3 gap-3">
                                                 <Button
+                                                    id={Transmisi.Manual}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleTransmisiChange}
+                                                    disabled={!carStore.isEditing}
+                                                    className={cn(
+                                                        "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                                        data.value === Transmisi.Manual &&
+                                                            "bg-[#1877F2] text-background"
+                                                    )}
+                                                >
+                                                    Manual
+                                                </Button>
+                                                <Button
+                                                    id={Transmisi.Matic}
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleTransmisiChange}
+                                                    disabled={!carStore.isEditing}
+                                                    className={cn(
+                                                        "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
+                                                        data.value === Transmisi.Matic &&
+                                                            "bg-[#1877F2] text-background"
+                                                    )}
+                                                >
+                                                    Matic
+                                                </Button>
+                                            </section>
+                                        </>
+                                    )}
+                                    {data.name === "Status" && (
+                                        <>
+                                            <p className="text-sm">{data.name}</p>
+                                            <section className="col-span-4 grid grid-cols-3 gap-3">
+                                                <Button
                                                     id={StatusMobil.Ready}
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={handleSelect}
+                                                    onClick={handleStatusChange}
                                                     disabled={!carStore.isEditing}
                                                     className={cn(
                                                         "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
@@ -349,7 +388,7 @@ export default function ManageCar({ mobil }: props) {
                                                     id={StatusMobil.Maintenance}
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={handleSelect}
+                                                    onClick={handleStatusChange}
                                                     disabled={!carStore.isEditing}
                                                     className={cn(
                                                         "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
@@ -363,7 +402,7 @@ export default function ManageCar({ mobil }: props) {
                                                     id={StatusMobil.Booked}
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={handleSelect}
+                                                    onClick={handleStatusChange}
                                                     disabled={!carStore.isEditing}
                                                     className={cn(
                                                         "flex-grow hover:bg-[rgba(11,95,204)] hover:text-background",
@@ -375,7 +414,8 @@ export default function ManageCar({ mobil }: props) {
                                                 </Button>
                                             </section>
                                         </>
-                                    ) : (
+                                    )}
+                                    {!["Status", "Transmisi"].includes(data.name!) && (
                                         <>
                                             <p className="text-sm">{data.name}</p>
                                             <Input
